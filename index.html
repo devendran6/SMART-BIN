@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoPulse SmartBin OS | Real-Life Dual Waste Dustbins</title>
+  <title>EcoPulse SmartBin OS | Multi-Location Fleet & Route Optimization</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -58,7 +58,7 @@
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-500 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
           <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-            <i data-lucide="trash-2" class="w-5 h-5 text-emerald-400"></i>
+            <i data-lucide="network" class="w-5 h-5 text-emerald-400"></i>
           </div>
         </div>
         <div>
@@ -67,39 +67,50 @@
               EcoPulse SmartBin OS
             </h1>
             <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
-              Dual Dustbin Telemetry
+              Multi-Location Fleet
             </span>
           </div>
           <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Station #104 &bull; Ultrasonic Sensors &bull; Touchless Lid Actuators Active
+            5 Municipal Stations Online &bull; GPS Fleet Sync &bull; LoRaWAN Telemetry
           </p>
         </div>
       </div>
 
       <!-- Action Utilities -->
       <div class="flex items-center gap-2 sm:gap-3">
-        
         <!-- Live IoT Stream Toggle -->
         <button id="toggle-iot-btn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-all shadow-sm">
           <span id="iot-live-indicator" class="badge-live-dot"></span>
-          <span>Live IoT Feed</span>
+          <span>Live Fleet Feed</span>
         </button>
 
         <!-- Sound Effects Toggle -->
-        <button id="toggle-sound-btn" title="Toggle Sound Effects & Alarms" class="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 transition-all">
+        <button id="toggle-sound-btn" title="Toggle Sound Effects" class="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 transition-all">
           <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400"></i>
         </button>
 
         <!-- Hardware & API Specs Modal Button -->
         <button id="open-hardware-modal" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all">
           <i data-lucide="cpu" class="w-4 h-4"></i>
-          <span>Hardware & Pinout</span>
+          <span>Hardware & LoRa</span>
         </button>
       </div>
 
     </div>
   </header>
+
+  <!-- MULTI-STATION SELECTOR BAR (HORIZONTAL SCROLL) -->
+  <div class="bg-slate-900/90 border-b border-slate-800/80 px-4 py-2.5 overflow-x-auto">
+    <div class="max-w-7xl mx-auto flex items-center gap-3">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i> Stations:
+      </span>
+      <div id="station-pills-container" class="flex items-center gap-2">
+        <!-- Populated via JavaScript -->
+      </div>
+    </div>
+  </div>
 
   <!-- Critical Threshold Alert Banner (Dynamic) -->
   <div id="critical-alert-banner" class="hidden bg-rose-950/80 border-b border-rose-600/60 px-4 py-3 backdrop-blur-md">
@@ -109,106 +120,87 @@
           <i data-lucide="alert-triangle" class="w-5 h-5"></i>
         </div>
         <div>
-          <h4 class="text-sm font-bold text-rose-200">Dustbin Capacity Warning!</h4>
-          <p id="critical-alert-text" class="text-xs text-rose-300/90 mt-0.5">One or both dustbins are critically full.</p>
+          <h4 class="text-sm font-bold text-rose-200">Municipal Overflow Warning!</h4>
+          <p id="critical-alert-text" class="text-xs text-rose-300/90 mt-0.5">Stations exceed 80% capacity.</p>
         </div>
       </div>
-      <button onclick="window.app.requestPickup()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-lg shadow-rose-900/40 transition-all flex items-center gap-1.5 whitespace-nowrap">
-        <i data-lucide="truck" class="w-4 h-4"></i>
-        Dispatch Collection Truck
+      <button onclick="window.app.optimizeAndDispatchRoute()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-lg shadow-rose-900/40 transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="navigation" class="w-4 h-4"></i>
+        Optimize & Dispatch Route
       </button>
-    </div>
-  </div>
-
-  <!-- Pickup En-Route Notification Banner (Dynamic) -->
-  <div id="truck-dispatch-status" class="hidden bg-amber-950/70 border-b border-amber-600/50 px-4 py-2.5 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-amber-200">
-      <div class="flex items-center gap-2">
-        <i data-lucide="truck" class="w-4 h-4 text-amber-400 animate-bounce"></i>
-        <span>Collection Truck En Route &bull; Ref: <strong id="truck-req-id" class="font-mono">REQ-2026</strong></span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span>Estimated Arrival: <strong id="truck-eta-text" class="text-amber-300 font-bold">10 mins</strong></span>
-      </div>
     </div>
   </div>
 
   <!-- Main Workspace -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     
-    <!-- Top Highlights & Explainer -->
+    <!-- Top Highlights Banner -->
     <div class="glass-panel p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-emerald-950/20 relative overflow-hidden">
       <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
         <div class="space-y-2 max-w-2xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Real-Life Smart Dustbin Segregation
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Multi-Location Waste Intelligence
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Dual Smart Dustbin Monitoring Station
+            City-Wide Smart Dustbin Fleet Network
           </h2>
           <p class="text-slate-300 text-sm leading-relaxed">
-            Real-life dustbin UI with motorized lids, touchless proximity sensors, and transparent acrylic cutaways showing internal waste accumulation for 
-            <strong class="text-emerald-400">Compostable</strong> (Wet Organic) and 
-            <strong class="text-amber-400">Decomposable</strong> (Dry Biodegradable Fibers).
+            Real-time ultrasonic monitoring across <strong class="text-emerald-400">multiple city locations</strong>. Automated TSP route optimization dispatches collection trucks only to full bins, cutting fuel consumption and eliminating street overflow.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <button id="request-pickup-btn" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-900/30 flex items-center gap-2 transition-all">
-            <i data-lucide="truck" class="w-4 h-4"></i>
-            Request Waste Collection
+          <button id="optimize-route-btn" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-900/30 flex items-center gap-2 transition-all">
+            <i data-lucide="navigation" class="w-4 h-4"></i>
+            Optimize Collection Route
           </button>
-          <a href="#sorter-section" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
-            <i data-lucide="scan" class="w-4 h-4 text-emerald-400"></i>
-            Waste Sorter Guide
+          <a href="#fleet-section" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-400"></i>
+            View All 5 Stations
           </a>
         </div>
       </div>
     </div>
 
-    <!-- DUSTBIN UI MODEL SELECTOR BAR -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/70 border border-slate-800">
-      <div class="flex items-center gap-2">
-        <i data-lucide="palette" class="w-4 h-4 text-sky-400"></i>
-        <span class="text-xs font-bold text-slate-200">Dustbin UI Design Model:</span>
-        <span class="text-xs text-slate-400 hidden sm:inline">&bull; Choose your dustbin style</span>
+    <!-- ACTIVE DUSTBIN STATION HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">ACTIVE STATION</span>
+          <h3 id="active-station-name" class="text-base sm:text-lg font-black text-white">BIN-104: Green Civic Hub</h3>
+        </div>
+        <p id="active-station-zone" class="text-xs text-slate-400 mt-0.5">Sector 4 &bull; Eco Park</p>
       </div>
-      <div class="flex items-center gap-2">
-        <button data-model="model-smart-kiosk" class="model-select-btn px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all bg-emerald-500/20 text-emerald-300 border-emerald-500/40">
-          <span>🏙️</span> Smart IoT Kiosk
-        </button>
-        <button data-model="model-wheelie-bin" class="model-select-btn px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all bg-slate-800 text-slate-400 border-slate-700">
-          <span>🚜</span> Curbside Wheelie Bin
-        </button>
-        <button data-model="model-stainless-steel" class="model-select-btn px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all bg-slate-800 text-slate-400 border-slate-700">
-          <span>🏢</span> Brushed Stainless
-        </button>
+
+      <div class="flex items-center gap-3">
+        <!-- Model Selector -->
+        <div class="flex items-center gap-1.5 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
+          <button data-model="model-smart-kiosk" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            🏙️ Kiosk
+          </button>
+          <button data-model="model-wheelie-bin" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-400 border border-slate-700">
+            🚜 Wheelie
+          </button>
+          <button data-model="model-stainless-steel" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-400 border border-slate-700">
+            🏢 Stainless
+          </button>
+        </div>
+
+        <div class="text-xs font-mono text-slate-400 flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+          <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span id="active-station-battery">96%</span> Solar
+        </div>
       </div>
     </div>
 
-    <!-- MAIN DUAL DUSTBIN SECTION -->
+    <!-- MAIN DUAL DUSTBIN VIEW FOR ACTIVE STATION -->
     <section>
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-white flex items-center gap-2">
-            <i data-lucide="gauge" class="w-5 h-5 text-emerald-400"></i>
-            Live Dustbin Telemetry & Current Fill Levels
-          </h3>
-          <p class="text-xs text-slate-400">Click the lids or pedals to test motorized opening & deposit waste</p>
-        </div>
-        <div class="text-xs text-slate-400 font-mono flex items-center gap-2">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          Ultrasonic Sensors Active
-        </div>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         <!-- ================= DUSTBIN 1: COMPOSTABLE (WET ORGANIC) ================= -->
         <div class="glass-panel-elevated rounded-3xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between">
           
           <div>
-            <!-- Header Info -->
             <div class="flex items-start justify-between gap-3 mb-3">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
@@ -225,13 +217,12 @@
                 </div>
               </div>
 
-              <!-- Status Badge -->
               <div id="compostable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Normal
               </div>
             </div>
 
-            <!-- Interactive Hand Wave & Pedal Row -->
+            <!-- Proximity & Pedal Bar -->
             <div class="flex items-center justify-between gap-2 mb-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
               <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">
                 <i data-lucide="hand" class="w-3.5 h-3.5 text-sky-400"></i> Touchless Sensor:
@@ -246,28 +237,22 @@
               </div>
             </div>
 
-            <!-- PHYSICAL 3D DUSTBIN MODEL -->
+            <!-- 3D DUSTBIN MODEL -->
             <div class="dustbin-perspective-stage">
               <div id="compostable-dustbin" class="dustbin-container dustbin-compostable model-smart-kiosk">
-                
-                <!-- Side Handles -->
                 <div class="dustbin-side-handle handle-left"></div>
                 <div class="dustbin-side-handle handle-right"></div>
 
-                <!-- Top Hood Handle -->
                 <div class="dustbin-lid-assembly">
                   <div class="dustbin-handle-bar"></div>
                   
-                  <!-- Motorized Hinged Lid -->
                   <div id="compostable-lid" data-lid-bin="compostable" class="dustbin-lid" title="Click to Open/Close Lid">
-                    <!-- Ultrasonic Transceiver Eyes -->
                     <div class="ultrasonic-lid-eyes">
                       <div class="sensor-optic"></div>
                       <div class="sensor-optic"></div>
                       <span class="text-[9px] font-mono text-sky-300 font-bold">IR &bull; HC-SR04</span>
                     </div>
 
-                    <!-- Lid LED Indicator -->
                     <div class="lid-led-status">
                       <span id="compostable-led-dot" class="lid-led-dot"></span>
                       <span>AUTO-LID</span>
@@ -275,29 +260,23 @@
                   </div>
                 </div>
 
-                <!-- Glowing Neck Collar -->
                 <div class="dustbin-neck-collar">
                   <div class="dustbin-neck-halo"></div>
                 </div>
 
-                <!-- Dustbin Main Body Chassis -->
                 <div class="dustbin-body">
                   <div class="dustbin-ribbed-texture"></div>
 
-                  <!-- Embedded Mini OLED Screen on Bin Chest -->
                   <div class="dustbin-embedded-screen">
                     <div class="flex items-center gap-1.5">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                      <span class="text-[10px] font-mono font-bold text-emerald-400">STATION #104</span>
+                      <span class="text-[10px] font-mono font-bold text-emerald-400">IoT TELEMETRY</span>
                     </div>
                     <div id="compostable-lcd-lid-status" class="text-[11px] font-mono text-slate-400">LID: CLOSED</div>
-                    <div id="compostable-lcd-fill" class="text-xs font-mono font-bold text-white">68% (40.8L)</div>
+                    <div id="compostable-lcd-fill" class="text-xs font-mono font-bold text-white">68%</div>
                   </div>
 
-                  <!-- Acrylic Cutaway Window Showing Actual Waste Inside -->
                   <div class="dustbin-cutaway-window">
-                    
-                    <!-- Depth Ruler Marks -->
                     <div class="cutaway-ruler">
                       <div class="cutaway-ruler-item"><span>100%</span></div>
                       <div class="cutaway-ruler-item"><span>75%</span></div>
@@ -306,51 +285,39 @@
                       <div class="cutaway-ruler-item"><span>0%</span></div>
                     </div>
 
-                    <!-- Ultrasonic Sound Waves from Lid Sensor -->
                     <div class="ultrasonic-beam-guide">
                       <div class="ultrasonic-wave-ring"></div>
                       <div class="ultrasonic-wave-ring"></div>
                       <div class="ultrasonic-wave-ring"></div>
                     </div>
 
-                    <!-- Floating Internal Waste Icons -->
                     <div id="compostable-stacked-icons" class="stacked-waste-icons"></div>
 
-                    <!-- Internal Waste Mass Level -->
                     <div id="compostable-fill" class="dustbin-waste-fill waste-fill-compostable" style="height: 68%;">
-                      <!-- Wave Top -->
                       <div class="waste-wave-top">
                         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-4 fill-emerald-500">
                           <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,45 L1200,120 L0,120 Z"></path>
                         </svg>
                       </div>
 
-                      <!-- Centered Readout -->
                       <div class="p-3 text-center text-white drop-shadow-lg">
                         <span id="compostable-percent" class="text-4xl font-black font-mono tracking-tight">68%</span>
                         <div class="text-[10px] uppercase font-mono tracking-widest text-emerald-200 font-bold mt-0.5">CURRENTLY FILLED</div>
                       </div>
                     </div>
-
                   </div>
-
                 </div>
 
-                <!-- Dustbin Base: Wheels and Foot Pedal -->
                 <div class="dustbin-base-assembly">
                   <div class="dustbin-wheel"></div>
-                  
                   <div id="compostable-foot-pedal" data-pedal-bin="compostable" class="dustbin-foot-pedal" title="Click to press foot pedal"></div>
-                  
                   <div class="dustbin-wheel"></div>
                 </div>
-
               </div>
             </div>
 
-            <!-- Key Sensor Telemetry Metrics -->
+            <!-- Telemetry Metrics -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
-              
               <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
                 <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
                   <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
@@ -386,10 +353,9 @@
                 <div class="text-sm sm:text-base font-bold text-white font-mono">65%</div>
                 <span class="text-[10px] text-slate-500">Optimal Aerobic</span>
               </div>
-
             </div>
 
-            <!-- Volume Capacity & Overflow Projection -->
+            <!-- Volume & Overflow -->
             <div class="p-3 rounded-2xl bg-slate-800/50 border border-slate-700/60 mb-4 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
@@ -400,10 +366,9 @@
                 <span id="compostable-overflow-time" class="text-slate-300 font-mono">~12 hours to capacity</span>
               </div>
             </div>
-
           </div>
 
-          <!-- Interactive Actions & Drop Waste -->
+          <!-- Actions -->
           <div class="space-y-3 pt-3 border-t border-slate-800">
             <div>
               <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
@@ -425,13 +390,11 @@
               </div>
             </div>
 
-            <!-- Manual Slider Calibration -->
             <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
               <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Calibrate Fill:</span>
               <input type="range" id="slider-compostable" min="0" max="100" class="w-full accent-emerald-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
             </div>
 
-            <!-- Empty Bin Button -->
             <button data-empty-bin="compostable" class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
               <i data-lucide="trash-2" class="w-4 h-4 text-emerald-400"></i>
               Clear & Empty Compostable Dustbin
@@ -445,7 +408,6 @@
         <div class="glass-panel-elevated rounded-3xl p-6 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between">
           
           <div>
-            <!-- Header Info -->
             <div class="flex items-start justify-between gap-3 mb-3">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
@@ -462,13 +424,12 @@
                 </div>
               </div>
 
-              <!-- Status Badge -->
               <div id="decomposable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-amber-400"></span> Normal
               </div>
             </div>
 
-            <!-- Interactive Hand Wave & Pedal Row -->
+            <!-- Proximity & Pedal Bar -->
             <div class="flex items-center justify-between gap-2 mb-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
               <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">
                 <i data-lucide="hand" class="w-3.5 h-3.5 text-amber-400"></i> Touchless Sensor:
@@ -483,28 +444,22 @@
               </div>
             </div>
 
-            <!-- PHYSICAL 3D DUSTBIN MODEL -->
+            <!-- 3D DUSTBIN MODEL -->
             <div class="dustbin-perspective-stage">
               <div id="decomposable-dustbin" class="dustbin-container dustbin-decomposable model-smart-kiosk">
-                
-                <!-- Side Handles -->
                 <div class="dustbin-side-handle handle-left"></div>
                 <div class="dustbin-side-handle handle-right"></div>
 
-                <!-- Top Hood Handle -->
                 <div class="dustbin-lid-assembly">
                   <div class="dustbin-handle-bar"></div>
                   
-                  <!-- Motorized Hinged Lid -->
                   <div id="decomposable-lid" data-lid-bin="decomposable" class="dustbin-lid" title="Click to Open/Close Lid">
-                    <!-- Ultrasonic Transceiver Eyes -->
                     <div class="ultrasonic-lid-eyes">
                       <div class="sensor-optic"></div>
                       <div class="sensor-optic"></div>
                       <span class="text-[9px] font-mono text-sky-300 font-bold">IR &bull; HC-SR04</span>
                     </div>
 
-                    <!-- Lid LED Indicator -->
                     <div class="lid-led-status">
                       <span id="decomposable-led-dot" class="lid-led-dot"></span>
                       <span>AUTO-LID</span>
@@ -512,29 +467,23 @@
                   </div>
                 </div>
 
-                <!-- Glowing Neck Collar -->
                 <div class="dustbin-neck-collar">
                   <div class="dustbin-neck-halo"></div>
                 </div>
 
-                <!-- Dustbin Main Body Chassis -->
                 <div class="dustbin-body">
                   <div class="dustbin-ribbed-texture"></div>
 
-                  <!-- Embedded Mini OLED Screen on Bin Chest -->
                   <div class="dustbin-embedded-screen">
                     <div class="flex items-center gap-1.5">
                       <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                      <span class="text-[10px] font-mono font-bold text-amber-400">STATION #104</span>
+                      <span class="text-[10px] font-mono font-bold text-amber-400">IoT TELEMETRY</span>
                     </div>
                     <div id="decomposable-lcd-lid-status" class="text-[11px] font-mono text-slate-400">LID: CLOSED</div>
-                    <div id="decomposable-lcd-fill" class="text-xs font-mono font-bold text-white">42% (33.6L)</div>
+                    <div id="decomposable-lcd-fill" class="text-xs font-mono font-bold text-white">42%</div>
                   </div>
 
-                  <!-- Acrylic Cutaway Window Showing Actual Waste Inside -->
                   <div class="dustbin-cutaway-window">
-                    
-                    <!-- Depth Ruler Marks -->
                     <div class="cutaway-ruler">
                       <div class="cutaway-ruler-item"><span>100%</span></div>
                       <div class="cutaway-ruler-item"><span>75%</span></div>
@@ -543,51 +492,39 @@
                       <div class="cutaway-ruler-item"><span>0%</span></div>
                     </div>
 
-                    <!-- Ultrasonic Sound Waves from Lid Sensor -->
                     <div class="ultrasonic-beam-guide">
                       <div class="ultrasonic-wave-ring"></div>
                       <div class="ultrasonic-wave-ring"></div>
                       <div class="ultrasonic-wave-ring"></div>
                     </div>
 
-                    <!-- Floating Internal Waste Icons -->
                     <div id="decomposable-stacked-icons" class="stacked-waste-icons"></div>
 
-                    <!-- Internal Waste Mass Level -->
                     <div id="decomposable-fill" class="dustbin-waste-fill waste-fill-decomposable" style="height: 42%;">
-                      <!-- Wave Top -->
                       <div class="waste-wave-top">
                         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-4 fill-amber-500">
                           <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,45 L1200,120 L0,120 Z"></path>
                         </svg>
                       </div>
 
-                      <!-- Centered Readout -->
                       <div class="p-3 text-center text-white drop-shadow-lg">
                         <span id="decomposable-percent" class="text-4xl font-black font-mono tracking-tight">42%</span>
                         <div class="text-[10px] uppercase font-mono tracking-widest text-amber-200 font-bold mt-0.5">CURRENTLY FILLED</div>
                       </div>
                     </div>
-
                   </div>
-
                 </div>
 
-                <!-- Dustbin Base: Wheels and Foot Pedal -->
                 <div class="dustbin-base-assembly">
                   <div class="dustbin-wheel"></div>
-                  
                   <div id="decomposable-foot-pedal" data-pedal-bin="decomposable" class="dustbin-foot-pedal" title="Click to press foot pedal"></div>
-                  
                   <div class="dustbin-wheel"></div>
                 </div>
-
               </div>
             </div>
 
-            <!-- Key Sensor Telemetry Metrics -->
+            <!-- Telemetry Metrics -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
-              
               <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
                 <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
                   <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
@@ -623,10 +560,9 @@
                 <div class="text-sm sm:text-base font-bold text-white font-mono">44%</div>
                 <span class="text-[10px] text-slate-500">Ideal Dry Range</span>
               </div>
-
             </div>
 
-            <!-- Volume Capacity & Overflow Projection -->
+            <!-- Volume & Overflow -->
             <div class="p-3 rounded-2xl bg-slate-800/50 border border-slate-700/60 mb-4 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <i data-lucide="database" class="w-4 h-4 text-amber-400"></i>
@@ -637,10 +573,9 @@
                 <span id="decomposable-overflow-time" class="text-slate-300 font-mono">~23 hours to capacity</span>
               </div>
             </div>
-
           </div>
 
-          <!-- Interactive Actions & Drop Waste -->
+          <!-- Actions -->
           <div class="space-y-3 pt-3 border-t border-slate-800">
             <div>
               <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
@@ -662,13 +597,11 @@
               </div>
             </div>
 
-            <!-- Manual Slider Calibration -->
             <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
               <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Calibrate Fill:</span>
               <input type="range" id="slider-decomposable" min="0" max="100" class="w-full accent-amber-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
             </div>
 
-            <!-- Empty Bin Button -->
             <button data-empty-bin="decomposable" class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
               <i data-lucide="trash-2" class="w-4 h-4 text-amber-400"></i>
               Clear & Empty Decomposable Dustbin
@@ -678,6 +611,120 @@
         </div>
 
       </div>
+    </section>
+
+
+    <!-- CITY-WIDE FLEET OVERVIEW GRID -->
+    <section id="fleet-section" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="layout-grid" class="w-5 h-5 text-emerald-400"></i>
+            All Municipal Stations at a Glance
+          </h3>
+          <p class="text-xs text-slate-400">Click any card to load that station's 3D dustbin telemetry view</p>
+        </div>
+        <div class="text-xs font-mono text-slate-400">5 Monitored Stations</div>
+      </div>
+
+      <div id="fleet-overview-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+        <!-- Populated via JavaScript -->
+      </div>
+    </section>
+
+
+    <!-- DYNAMIC ROUTE OPTIMIZATION & LEAFLET FLEET MAP -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Interactive Map (2 Columns) -->
+      <div class="lg:col-span-2 glass-panel-elevated rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="map" class="w-5 h-5 text-sky-400"></i>
+                City-Wide Fleet Map & TSP Route Optimizer
+              </h3>
+              <p class="text-xs text-slate-400">Green = Normal &bull; Yellow = Moderate &bull; Red = Urgent Pickup Needed</p>
+            </div>
+            <button onclick="window.app.optimizeAndDispatchRoute()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-900/40">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              Run Route
+            </button>
+          </div>
+
+          <div id="smartbin-map" class="w-full h-88 rounded-2xl overflow-hidden border border-slate-700/80 shadow-inner mb-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="factory" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 font-medium">Bio-Compost Hub</div>
+              <div class="text-xs font-bold text-slate-200">Central Depot & Plant</div>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="navigation" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 font-medium">Route Algorithm</div>
+              <div class="text-xs font-bold text-slate-200">Greedy TSP &bull; Fuel-Optimized</div>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="fuel" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400 font-medium">Fuel Reduction</div>
+              <div class="text-xs font-bold text-slate-200">~38% Diesel Saved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn-by-Turn Driver Manifest & Logs (1 Column) -->
+      <div class="glass-panel-elevated rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="truck" class="w-4 h-4 text-sky-400"></i>
+              Driver Navigation HUD
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400">Waypoint Manifest</span>
+          </div>
+
+          <!-- Dynamic Driver Manifest -->
+          <div id="driver-route-manifest" class="mb-4">
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-slate-400 text-xs">
+              <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-sky-400"></i>
+              Click <strong>"Optimize Collection Route"</strong> to generate the shortest fuel-saving path connecting full bins!
+            </div>
+          </div>
+
+          <!-- Audit Trail -->
+          <div class="border-t border-slate-800 pt-3">
+            <div class="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+              <span>Fleet Audit Trail</span>
+              <span class="text-[10px] text-slate-500 font-mono">Live</span>
+            </div>
+            <div id="activity-logs-container" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 text-center">
+          <button onclick="localStorage.removeItem('ecopulse_smartbin_fleet_state'); location.reload();" class="text-slate-500 hover:text-slate-300 underline text-[11px]">
+            Reset Fleet Telemetry
+          </button>
+        </div>
+      </div>
+
     </section>
 
 
@@ -691,7 +738,7 @@
           </div>
           <h3 class="text-2xl font-black text-white">Which Dustbin Does Your Waste Belong To?</h3>
           <p class="text-slate-400 text-xs sm:text-sm">
-            Search any everyday item to discover whether it belongs in the <span class="text-emerald-400 font-semibold">Compostable Dustbin</span>, <span class="text-amber-400 font-semibold">Decomposable Dustbin</span>, or <span class="text-rose-400 font-semibold">Non-Decomposable Waste</span>, along with natural decomposition timelines.
+            Search any everyday item to discover whether it belongs in the <span class="text-emerald-400 font-semibold">Compostable Dustbin</span>, <span class="text-amber-400 font-semibold">Decomposable Dustbin</span>, or <span class="text-rose-400 font-semibold">Non-Decomposable Waste</span>.
           </p>
         </div>
 
@@ -719,9 +766,7 @@
           <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Newspaper</button>
         </div>
 
-        <!-- Dynamic Results Area -->
         <div id="classifier-results" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          <!-- Initial default view populated on load -->
           <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
@@ -762,105 +807,16 @@
       </div>
     </section>
 
-
-    <!-- REAL-LIFE LOGISTICS MAP & FLEET DISPATCH -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- Interactive City Logistics Map (2 Columns) -->
-      <div class="lg:col-span-2 glass-panel-elevated rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                <i data-lucide="map-pin" class="w-5 h-5 text-sky-400"></i>
-                Municipal Collection & Smart Route Logistics
-              </h3>
-              <p class="text-xs text-slate-400">GPS Geo-tracking for Dustbin Station #104 and nearest Bio-Composting Hub</p>
-            </div>
-            <span class="px-2.5 py-1 text-xs font-mono rounded-lg bg-sky-950 text-sky-300 border border-sky-800">
-              Live GPS Sync
-            </span>
-          </div>
-
-          <!-- Leaflet Map Container -->
-          <div id="smartbin-map" class="w-full h-80 rounded-2xl overflow-hidden border border-slate-700/80 shadow-inner mb-4"></div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
-              <i data-lucide="map-pin" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[11px] text-slate-400 font-medium">Dustbin Station #104</div>
-              <div class="text-xs font-bold text-slate-200">Sector 4, Green Zone</div>
-            </div>
-          </div>
-
-          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
-              <i data-lucide="factory" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[11px] text-slate-400 font-medium">Processing Facility</div>
-              <div class="text-xs font-bold text-slate-200">Central Bio-Plant (3.2 km)</div>
-            </div>
-          </div>
-
-          <div class="p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
-              <i data-lucide="truck" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[11px] text-slate-400 font-medium">Fleet Response Time</div>
-              <div class="text-xs font-bold text-slate-200">&lt; 15 mins automated</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Real-Time Activity Log (1 Column) -->
-      <div class="glass-panel-elevated rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <i data-lucide="list-checks" class="w-4 h-4 text-emerald-400"></i>
-              Real-Time Audit Trail
-            </h3>
-            <span class="text-[10px] font-mono text-slate-400">Events Logged</span>
-          </div>
-          
-          <div id="activity-logs-container" class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
-            <!-- Populated via JS -->
-          </div>
-        </div>
-
-        <div class="pt-4 border-t border-slate-800/80 mt-4">
-          <div class="flex items-center justify-between text-xs text-slate-400">
-            <span>Audit Integrity: <strong>Verified</strong></span>
-            <button onclick="localStorage.removeItem('ecopulse_smartbin_state'); location.reload();" class="text-slate-500 hover:text-slate-300 underline text-[11px]">
-              Reset Telemetry
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-
-    <!-- ENVIRONMENTAL IMPACT METRICS & ANALYTICS CHARTS -->
+    <!-- ENVIRONMENTAL IMPACT METRICS & CHARTS -->
     <section class="space-y-6">
-      
-      <!-- Top 4 KPIs -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        
         <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex items-center gap-4">
           <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <i data-lucide="sprout" class="w-6 h-6"></i>
           </div>
           <div>
             <span class="text-xs text-slate-400 font-medium">Organic Humus Yield</span>
-            <div id="stat-compost-kg" class="text-xl sm:text-2xl font-black text-white font-mono">142.5 kg</div>
+            <div id="stat-compost-kg" class="text-xl sm:text-2xl font-black text-white font-mono">284.5 kg</div>
             <span class="text-[10px] text-emerald-400 font-semibold">100% Nutrient rich</span>
           </div>
         </div>
@@ -871,7 +827,7 @@
           </div>
           <div>
             <span class="text-xs text-slate-400 font-medium">Landfill Diverted</span>
-            <div id="stat-landfill-kg" class="text-xl sm:text-2xl font-black text-white font-mono">284.0 kg</div>
+            <div id="stat-landfill-kg" class="text-xl sm:text-2xl font-black text-white font-mono">512.0 kg</div>
             <span class="text-[10px] text-amber-400 font-semibold">Saved from dumps</span>
           </div>
         </div>
@@ -882,7 +838,7 @@
           </div>
           <div>
             <span class="text-xs text-slate-400 font-medium">CO2e Emissions Prevented</span>
-            <div id="stat-co2-kg" class="text-xl sm:text-2xl font-black text-white font-mono">89.2 kg</div>
+            <div id="stat-co2-kg" class="text-xl sm:text-2xl font-black text-white font-mono">142.0 kg</div>
             <span class="text-[10px] text-sky-400 font-semibold">Methane abated</span>
           </div>
         </div>
@@ -893,17 +849,13 @@
           </div>
           <div>
             <span class="text-xs text-slate-400 font-medium">Logistics Pickups</span>
-            <div id="stat-pickups" class="text-xl sm:text-2xl font-black text-white font-mono">14</div>
-            <span class="text-[10px] text-purple-400 font-semibold">Zero overflows logged</span>
+            <div id="stat-pickups" class="text-xl sm:text-2xl font-black text-white font-mono">26</div>
+            <span class="text-[10px] text-purple-400 font-semibold">Zero overflows</span>
           </div>
         </div>
-
       </div>
 
-      <!-- Charts Row -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Weekly Fill Trend Chart (2 Cols) -->
         <div class="lg:col-span-2 glass-panel p-6 rounded-3xl border border-slate-800">
           <div class="flex items-center justify-between mb-4">
             <div>
@@ -911,7 +863,7 @@
                 <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
                 7-Day Waste Accumulation & Fill Velocity
               </h3>
-              <p class="text-xs text-slate-400">Tracking daily fill spikes to optimize collection truck schedules</p>
+              <p class="text-xs text-slate-400">Daily average fill across municipal fleet</p>
             </div>
             <div class="flex items-center gap-3 text-xs font-mono">
               <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Compostable</span>
@@ -923,25 +875,22 @@
           </div>
         </div>
 
-        <!-- Waste Composition Doughnut (1 Col) -->
         <div class="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
           <div>
             <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               Current Stream Ratio
             </h3>
-            <p class="text-xs text-slate-400 mb-4">Proportion of wet organic vs dry fibrous waste</p>
+            <p class="text-xs text-slate-400 mb-4">Wet organic vs dry fibrous ratio at active station</p>
             <div class="h-52 w-full flex items-center justify-center">
               <canvas id="waste-breakdown-chart"></canvas>
             </div>
           </div>
           <div class="pt-3 border-t border-slate-800 text-center text-xs text-slate-400">
-            Biodegradable balance is optimal for microbial processing
+            Organic compost conversion rate: 65% efficiency
           </div>
         </div>
-
       </div>
-
     </section>
 
   </main>
@@ -951,32 +900,31 @@
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <span class="font-extrabold text-slate-300">EcoPulse SmartBin OS</span>
-        <span>&bull; Real-life Dual Dustbin Waste Management System</span>
+        <span>&bull; Real-life Multi-Location Smart Waste Management Network</span>
       </div>
       <div class="flex items-center gap-4 text-slate-400">
-        <span>Touchless Proximity Sensors</span>
+        <span>LoRaWAN / NB-IoT Enabled</span>
         <span>&bull;</span>
-        <span>Motorized Servo Lids</span>
+        <span>Traveling Salesperson Route Optimization</span>
         <span>&bull;</span>
         <button onclick="document.getElementById('hardware-modal').classList.remove('hidden')" class="hover:text-emerald-400 underline">
-          View Wiring Diagram
+          View Hardware Specs
         </button>
       </div>
     </div>
   </footer>
 
-  <!-- HARDWARE & REAL-LIFE IOT INTEGRATION MODAL -->
+  <!-- HARDWARE & LORAWAN INTEGRATION MODAL -->
   <div id="hardware-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
     <div class="glass-panel-elevated max-w-3xl w-full rounded-3xl border border-slate-700 p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
-      
       <div class="flex items-start justify-between gap-4 pb-4 border-b border-slate-800">
         <div class="flex items-center gap-3">
           <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            <i data-lucide="cpu" class="w-6 h-6"></i>
+            <i data-lucide="radio-tower" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white">Physical Hardware & IoT Integration</h3>
-            <p class="text-xs text-slate-400">How to connect physical HC-SR04 ultrasonic sensors and servo lids to this live dashboard</p>
+            <h3 class="text-xl font-bold text-white">Multi-Location IoT & LoRaWAN Architecture</h3>
+            <p class="text-xs text-slate-400">How multiple outdoor dustbins transmit data across city-wide distances</p>
           </div>
         </div>
         <button id="close-hardware-modal" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all">
@@ -984,79 +932,44 @@
         </button>
       </div>
 
-      <div class="space-y-6 pt-6 text-sm text-slate-300">
-        
-        <!-- Architecture Diagram -->
+      <div class="space-y-5 pt-5 text-sm text-slate-300">
         <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <h4 class="font-bold text-white text-xs uppercase tracking-wider text-emerald-400">Physical Dustbin Hardware Architecture</h4>
+          <h4 class="font-bold text-white text-xs uppercase tracking-wider text-emerald-400">1. Long-Range Wireless Transmission (LoRaWAN &amp; NB-IoT)</h4>
           <p class="text-xs leading-relaxed text-slate-300">
-            1. <strong>Ultrasonic Sensors (HC-SR04)</strong> are installed under the motorized lid of each dustbin pointing downward.<br>
-            2. The sensor emits sound pulses at 40 kHz, reflects off the waste top layer, and calculates distance.<br>
-            3. <strong>Touchless Opening:</strong> An infrared sensor (TCRT5000 or PIR) triggers an SG90 / MG996R servo motor to open the lid touchlessly.<br>
-            4. <strong>Fill % Formula:</strong> <code class="bg-slate-800 px-2 py-0.5 rounded text-amber-300 font-mono">Fill% = ((TotalBinHeight - Distance) / TotalBinHeight) * 100</code>
+            Outdoor dustbins across different streets/campuses use <strong>LoRaWAN (868 / 915 MHz)</strong> transceivers. 
+            A single gateway covers a <strong>10–15 km radius</strong> with minimal battery draw (3-5 years on battery or small solar cap).
           </p>
         </div>
 
-        <!-- ESP32 Wiring Guide -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-            <h5 class="font-bold text-white text-xs mb-2 flex items-center gap-1.5 text-emerald-400">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Compostable Dustbin Pinout
-            </h5>
-            <ul class="text-xs space-y-1 font-mono text-slate-400">
-              <li>Ultrasonic TRIG &rarr; GPIO 5</li>
-              <li>Ultrasonic ECHO &rarr; GPIO 18</li>
-              <li>Lid Servo Motor &rarr; GPIO 13 (PWM)</li>
-              <li>IR Proximity Sensor &rarr; GPIO 14</li>
-            </ul>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-            <h5 class="font-bold text-white text-xs mb-2 flex items-center gap-1.5 text-amber-400">
-              <i data-lucide="check-circle" class="w-4 h-4"></i> Decomposable Dustbin Pinout
-            </h5>
-            <ul class="text-xs space-y-1 font-mono text-slate-400">
-              <li>Ultrasonic TRIG &rarr; GPIO 19</li>
-              <li>Ultrasonic ECHO &rarr; GPIO 21</li>
-              <li>Lid Servo Motor &rarr; GPIO 22 (PWM)</li>
-              <li>IR Proximity Sensor &rarr; GPIO 23</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- API Post Payload -->
-        <div>
-          <h4 class="font-bold text-white text-xs uppercase tracking-wider mb-2">HTTP POST Webhook Endpoint</h4>
-          <pre class="p-4 rounded-xl bg-slate-900 text-xs font-mono text-emerald-300 border border-slate-800 overflow-x-auto">
-POST /api/bins/update
-Content-Type: application/json
-
+        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white text-xs uppercase tracking-wider text-sky-400">2. Real-Time Packet Protocol (JSON / MQTT)</h4>
+          <pre class="p-3 rounded-xl bg-slate-950 text-xs font-mono text-emerald-300 border border-slate-800 overflow-x-auto">
 {
-  "binId": "BIN-104",
-  "compostable": {
-    "fillPercent": 68,
-    "distanceCm": 32,
-    "weightKg": 16.8
-  },
-  "decomposable": {
-    "fillPercent": 42,
-    "distanceCm": 58,
-    "weightKg": 9.4
-  }
+  "binId": "BIN-101",
+  "location": { "lat": 12.9820, "lng": 77.5880 },
+  "compostableFill": 88,
+  "decomposableFill": 42,
+  "batteryPercent": 94,
+  "temperatureC": 41.2
 }</pre>
         </div>
 
+        <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white text-xs uppercase tracking-wider text-amber-400">3. Dynamic Route Optimization Algorithm (TSP)</h4>
+          <p class="text-xs leading-relaxed text-slate-300">
+            Instead of sending trucks to every bin, the server filters for bins with <code class="text-rose-300 font-mono">fill &ge; 75%</code>, calculates the <strong>Traveling Salesperson Problem (TSP)</strong> shortest path from the central Bio-Plant depot, and dispatches the optimal GPS turn-by-turn route to the driver's tablet.
+          </p>
+        </div>
       </div>
 
       <div class="mt-6 pt-4 border-t border-slate-800 flex justify-end">
         <button onclick="document.getElementById('hardware-modal').classList.add('hidden')" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors">
-          Got It, Return to Dustbin Dashboard
+          Return to Dashboard
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- Main JavaScript File -->
   <script src="js/app.js"></script>
 </body>
 </html>

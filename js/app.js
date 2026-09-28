@@ -1,62 +1,146 @@
 /**
- * EcoPulse SmartBin OS - Core Management Engine
- * Real-life Waste Management System with Realistic 3D Dustbin UI
+ * EcoPulse SmartBin OS - Multi-Location Fleet & Route Engine
+ * Real-Life Municipal Waste Management across Multiple Dustbin Stations
  */
 
-const DEFAULT_STATE = {
-  activeModel: "model-smart-kiosk", // "model-smart-kiosk", "model-wheelie-bin", "model-stainless-steel"
-  bins: {
+const CENTRAL_HUB = {
+  id: "HUB-01",
+  name: "Central Municipal Bio-Composting Plant",
+  type: "facility",
+  coords: [12.9716, 77.5946],
+  description: "Main anaerobic digestion and pulp processing facility"
+};
+
+const INITIAL_STATIONS = {
+  "BIN-101": {
+    id: "BIN-101",
+    name: "University Food Court & Cafeteria",
+    zone: "Sector 1 &bull; Campus Area",
+    coords: [12.9820, 77.5880],
+    batteryPercent: 94,
+    solarCharging: true,
+    lastPing: "Just now",
     compostable: {
-      name: "Compostable Waste",
-      type: "organic",
-      color: "#10b981",
-      fillLevel: 68,
-      maxCapacityLiters: 60,
+      fillLevel: 88,
+      weightKg: 22.4,
+      temperatureC: 41.2,
+      moisturePercent: 70,
       totalHeightCm: 100,
+      maxCapacityLiters: 60,
+      lidOpen: false
+    },
+    decomposable: {
+      fillLevel: 42,
+      weightKg: 8.6,
+      humidityPercent: 40,
+      totalHeightCm: 100,
+      maxCapacityLiters: 80,
+      lidOpen: false
+    }
+  },
+  "BIN-102": {
+    id: "BIN-102",
+    name: "Tech Park & Corporate Plaza",
+    zone: "Sector 3 &bull; IT Corridor",
+    coords: [12.9640, 77.6110],
+    batteryPercent: 98,
+    solarCharging: true,
+    lastPing: "1 min ago",
+    compostable: {
+      fillLevel: 32,
+      weightKg: 7.8,
+      temperatureC: 34.0,
+      moisturePercent: 55,
+      totalHeightCm: 100,
+      maxCapacityLiters: 60,
+      lidOpen: false
+    },
+    decomposable: {
+      fillLevel: 84,
+      weightKg: 19.5,
+      humidityPercent: 38,
+      totalHeightCm: 100,
+      maxCapacityLiters: 80,
+      lidOpen: false
+    }
+  },
+  "BIN-103": {
+    id: "BIN-103",
+    name: "Metro Transit & City Plaza",
+    zone: "Sector 2 &bull; Commercial Zone",
+    coords: [12.9910, 77.6080],
+    batteryPercent: 91,
+    solarCharging: false,
+    lastPing: "Just now",
+    compostable: {
+      fillLevel: 56,
+      weightKg: 13.8,
+      temperatureC: 37.0,
+      moisturePercent: 62,
+      totalHeightCm: 100,
+      maxCapacityLiters: 60,
+      lidOpen: false
+    },
+    decomposable: {
+      fillLevel: 64,
+      weightKg: 14.2,
+      humidityPercent: 42,
+      totalHeightCm: 100,
+      maxCapacityLiters: 80,
+      lidOpen: false
+    }
+  },
+  "BIN-104": {
+    id: "BIN-104",
+    name: "Green Civic Hub & Botanical Garden",
+    zone: "Sector 4 &bull; Eco Park",
+    coords: [12.9850, 77.6100],
+    batteryPercent: 96,
+    solarCharging: true,
+    lastPing: "Just now",
+    compostable: {
+      fillLevel: 68,
       weightKg: 16.8,
       temperatureC: 38.5,
       moisturePercent: 65,
-      odorIndex: "Low (Safe)",
-      lidOpen: false,
-      lastEmptied: "2026-09-27 08:30",
-      alertThreshold: 80,
-      itemsSample: ["Vegetable scraps", "Coffee grounds", "Fruit peels", "Egg shells", "Leaves"]
+      totalHeightCm: 100,
+      maxCapacityLiters: 60,
+      lidOpen: false
     },
     decomposable: {
-      name: "Decomposable Waste",
-      type: "biodegradable",
-      color: "#f59e0b",
       fillLevel: 42,
-      maxCapacityLiters: 80,
-      totalHeightCm: 100,
       weightKg: 9.4,
       humidityPercent: 44,
-      degradeRate: "Medium (2-8 Weeks)",
-      lidOpen: false,
-      lastEmptied: "2026-09-26 14:15",
-      alertThreshold: 80,
-      itemsSample: ["Cardboard packaging", "Untreated paper", "Egg cartons", "Paper bags", "Sawdust"]
+      totalHeightCm: 100,
+      maxCapacityLiters: 80,
+      lidOpen: false
     }
   },
-  iotSimulating: true,
-  audioAlertsEnabled: true,
-  pickupStatus: {
-    requested: false,
-    truckEtaMinutes: null,
-    truckStep: 0,
-    requestId: null
-  },
-  historyLogs: [
-    { time: "18:45:10", type: "deposit", bin: "compostable", amount: "+8%", note: "Cafeteria food scraps deposited" },
-    { time: "17:20:04", type: "deposit", bin: "decomposable", amount: "+12%", note: "Packaging boxes shredded & deposited" },
-    { time: "15:05:32", type: "alert", bin: "compostable", amount: "65%", note: "Level exceeded 60% standard marker" },
-    { time: "11:30:00", type: "empty", bin: "compostable", amount: "0%", note: "Municipal Organic Collector cleared bin" }
-  ],
-  stats: {
-    totalCompostProducedKg: 142.5,
-    co2EmissionsSavedKg: 89.2,
-    landfillDivertedKg: 284.0,
-    totalPickups: 14
+  "BIN-105": {
+    id: "BIN-105",
+    name: "City General Hospital & Medical Zone",
+    zone: "Sector 5 &bull; Health Quarter",
+    coords: [12.9580, 77.5850],
+    batteryPercent: 99,
+    solarCharging: true,
+    lastPing: "2 mins ago",
+    compostable: {
+      fillLevel: 25,
+      weightKg: 5.4,
+      temperatureC: 32.0,
+      moisturePercent: 50,
+      totalHeightCm: 100,
+      maxCapacityLiters: 60,
+      lidOpen: false
+    },
+    decomposable: {
+      fillLevel: 30,
+      weightKg: 6.2,
+      humidityPercent: 45,
+      totalHeightCm: 100,
+      maxCapacityLiters: 80,
+      lidOpen: false
+    }
   }
 };
 
@@ -74,7 +158,6 @@ const WASTE_DATABASE = [
   { name: "Newspaper / Newsprint", category: "decomposable", icon: "📰", time: "6 Weeks", tip: "Soy-based inks are completely biodegradable." },
   { name: "Untreated Wood Shavings", category: "decomposable", icon: "🪵", time: "6 - 12 Months", tip: "Natural untreated wood fibers decompose naturally into humus." },
 
-  // Non-decomposable warnings
   { name: "Plastic Bottle (PET)", category: "non-decomposable", icon: "🧴", time: "450 Years", tip: "DO NOT PUT IN THESE BINS. Divert to Plastic Recycling Stream!" },
   { name: "Styrofoam Cup", category: "non-decomposable", icon: "☕", time: "500+ Years", tip: "Does not decompose naturally. Requires specialized chemical recycling." },
   { name: "Aluminum Soda Can", category: "non-decomposable", icon: "🥫", time: "200 Years", tip: "Place in Clean Metal Scrap / Dry Recycling Bin." }
@@ -86,9 +169,9 @@ class SmartBinApp {
     this.audioContext = null;
     this.iotTimer = null;
     this.map = null;
-    this.binMarker = null;
+    this.stationMarkers = {};
     this.truckMarker = null;
-    this.routeLine = null;
+    this.routePolyline = null;
     this.charts = {};
 
     this.init();
@@ -96,37 +179,71 @@ class SmartBinApp {
 
   loadState() {
     try {
-      const saved = localStorage.getItem("ecopulse_smartbin_state");
+      const saved = localStorage.getItem("ecopulse_smartbin_fleet_state");
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
-          ...DEFAULT_STATE,
-          ...parsed,
-          bins: {
-            compostable: { ...DEFAULT_STATE.bins.compostable, ...parsed.bins?.compostable, lidOpen: false },
-            decomposable: { ...DEFAULT_STATE.bins.decomposable, ...parsed.bins?.decomposable, lidOpen: false }
+          currentStationId: parsed.currentStationId || "BIN-104",
+          activeModel: parsed.activeModel || "model-smart-kiosk",
+          stations: { ...INITIAL_STATIONS, ...parsed.stations },
+          iotSimulating: parsed.iotSimulating ?? true,
+          audioAlertsEnabled: parsed.audioAlertsEnabled ?? true,
+          pickupRouteActive: false,
+          historyLogs: parsed.historyLogs || [
+            { time: "18:45:10", station: "BIN-101", type: "alert", note: "Compostable bin exceeded 85% capacity" },
+            { time: "17:20:04", station: "BIN-102", type: "alert", note: "Decomposable packaging reached 84%" },
+            { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Organic food scraps deposited (+10%)" }
+          ],
+          stats: parsed.stats || {
+            totalCompostProducedKg: 284.5,
+            co2EmissionsSavedKg: 142.0,
+            landfillDivertedKg: 512.0,
+            totalPickups: 26,
+            fuelSavedLiters: 48.6
           }
         };
       }
     } catch (e) {
-      console.warn("Could not load stored state, using defaults:", e);
+      console.warn("Could not load state, using defaults:", e);
     }
-    return JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+    return {
+      currentStationId: "BIN-104",
+      activeModel: "model-smart-kiosk",
+      stations: JSON.parse(JSON.stringify(INITIAL_STATIONS)),
+      iotSimulating: true,
+      audioAlertsEnabled: true,
+      pickupRouteActive: false,
+      historyLogs: [
+        { time: "18:45:10", station: "BIN-101", type: "alert", note: "Compostable bin exceeded 85% capacity" },
+        { time: "17:20:04", station: "BIN-102", type: "alert", note: "Decomposable packaging reached 84%" },
+        { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Organic food scraps deposited (+10%)" }
+      ],
+      stats: {
+        totalCompostProducedKg: 284.5,
+        co2EmissionsSavedKg: 142.0,
+        landfillDivertedKg: 512.0,
+        totalPickups: 26,
+        fuelSavedLiters: 48.6
+      }
+    };
   }
 
   saveState() {
     try {
-      localStorage.setItem("ecopulse_smartbin_state", JSON.stringify(this.state));
+      localStorage.setItem("ecopulse_smartbin_fleet_state", JSON.stringify(this.state));
     } catch (e) {
       console.error("Failed to save state:", e);
     }
   }
 
-  init() {
-    this.applyBinModel(this.state.activeModel);
-    this.populateInternalFloatingItems("compostable", ["🍌", "🍎", "🥬", "☕", "🍂"]);
-    this.populateInternalFloatingItems("decomposable", ["📦", "🛍️", "📰", "🥡", "🪵"]);
+  getCurrentStation() {
+    return this.state.stations[this.state.currentStationId] || this.state.stations["BIN-104"];
+  }
 
+  init() {
+    this.renderStationSelector();
+    this.renderFleetGrid();
     this.renderAll();
     this.setupEventListeners();
     this.initCharts();
@@ -137,7 +254,7 @@ class SmartBinApp {
     }
   }
 
-  // Populate floating visual trash icons inside the cutaway window
+  // Populate floating waste icons inside the acrylic window
   populateInternalFloatingItems(binKey, icons) {
     const container = document.getElementById(`${binKey}-stacked-icons`);
     if (!container) return;
@@ -155,7 +272,7 @@ class SmartBinApp {
     });
   }
 
-  // Audio synthesis: Servo whir for lid, clunk for close, drop thud
+  // Audio synthesis
   playSound(type) {
     if (!this.state.audioAlertsEnabled) return;
     try {
@@ -166,11 +283,9 @@ class SmartBinApp {
       if (this.audioContext.state === "suspended") {
         this.audioContext.resume();
       }
-
       const now = this.audioContext.currentTime;
 
       if (type === "servo") {
-        // High-tech motorized lid opening servo whir
         const osc = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
         osc.type = "triangle";
@@ -183,7 +298,6 @@ class SmartBinApp {
         osc.start(now);
         osc.stop(now + 0.32);
       } else if (type === "clunk") {
-        // Lid closing mechanical latch
         const osc = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
         osc.type = "sine";
@@ -196,7 +310,6 @@ class SmartBinApp {
         osc.start(now);
         osc.stop(now + 0.2);
       } else if (type === "drop") {
-        // Trash dropping thud
         const osc = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
         osc.type = "sine";
@@ -209,7 +322,6 @@ class SmartBinApp {
         osc.start(now);
         osc.stop(now + 0.25);
       } else if (type === "alarm") {
-        // High-priority overflow alert
         const osc = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
         osc.type = "sawtooth";
@@ -227,9 +339,229 @@ class SmartBinApp {
     }
   }
 
-  // Interactive Dustbin Lid Control
+  // Render station selector buttons
+  renderStationSelector() {
+    const container = document.getElementById("station-pills-container");
+    if (!container) return;
+
+    container.innerHTML = Object.values(this.state.stations).map(station => {
+      const isCritical = station.compostable.fillLevel >= 80 || station.decomposable.fillLevel >= 80;
+      const isActive = station.id === this.state.currentStationId;
+      const criticalClass = isCritical ? "has-critical" : "";
+      const activeClass = isActive ? "active" : "";
+
+      let statusDot = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span>`;
+      if (isCritical) {
+        statusDot = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>`;
+      } else if (station.compostable.fillLevel >= 60 || station.decomposable.fillLevel >= 60) {
+        statusDot = `<span class="w-2 h-2 rounded-full bg-amber-400"></span>`;
+      }
+
+      return `
+        <button onclick="window.app.switchStation('${station.id}')" class="station-pill ${activeClass} ${criticalClass}">
+          ${statusDot}
+          <span>${station.id}: ${station.name.split("&")[0].trim()}</span>
+          <span class="text-[10px] font-mono opacity-60">(${Math.max(station.compostable.fillLevel, station.decomposable.fillLevel)}%)</span>
+        </button>
+      `;
+    }).join("");
+  }
+
+  // Render city-wide fleet grid overview
+  renderFleetGrid() {
+    const container = document.getElementById("fleet-overview-grid");
+    if (!container) return;
+
+    container.innerHTML = Object.values(this.state.stations).map(station => {
+      const compFill = station.compostable.fillLevel;
+      const decompFill = station.decomposable.fillLevel;
+      const maxFill = Math.max(compFill, decompFill);
+      const isCritical = maxFill >= 80;
+      const isActive = station.id === this.state.currentStationId;
+
+      let badgeColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      let statusText = "Normal";
+      if (isCritical) {
+        badgeColor = "bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse";
+        statusText = "Needs Pickup!";
+      } else if (maxFill >= 60) {
+        badgeColor = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+        statusText = "Moderate";
+      }
+
+      return `
+        <div onclick="window.app.switchStation('${station.id}')" class="fleet-card ${isActive ? 'active-fleet' : ''}">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-white font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500 animate-ping' : 'bg-emerald-400'}"></span>
+              ${station.id}
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}">
+              ${statusText}
+            </span>
+          </div>
+
+          <h5 class="text-xs font-semibold text-slate-200 line-clamp-1 mb-1">${station.name}</h5>
+          <p class="text-[11px] text-slate-400 mb-3">${station.zone}</p>
+
+          <!-- Dual Progress Bars -->
+          <div class="space-y-1.5 text-[11px] font-mono">
+            <div>
+              <div class="flex justify-between text-slate-400 text-[10px]">
+                <span>Compostable:</span>
+                <span class="text-emerald-400 font-bold">${compFill}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500 transition-all" style="width: ${compFill}%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-slate-400 text-[10px]">
+                <span>Decomposable:</span>
+                <span class="text-amber-400 font-bold">${decompFill}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-amber-500 transition-all" style="width: ${decompFill}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+            <span class="flex items-center gap-1">
+              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-400"></i> ${station.batteryPercent}% Solar
+            </span>
+            <span class="text-sky-400 font-semibold hover:underline">Select &rarr;</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  // Switch Active Dustbin Station
+  switchStation(stationId) {
+    if (!this.state.stations[stationId]) return;
+    this.state.currentStationId = stationId;
+
+    const station = this.state.stations[stationId];
+    this.saveState();
+
+    this.renderStationSelector();
+    this.renderFleetGrid();
+    this.renderAll();
+
+    // Pan map to new station
+    if (this.map && station.coords) {
+      this.map.flyTo(station.coords, 14, { animate: true, duration: 1.2 });
+      if (this.stationMarkers[stationId]) {
+        this.stationMarkers[stationId].openPopup();
+      }
+    }
+
+    this.showToast(`📍 Switched monitoring view to: ${station.name}`, "info");
+  }
+
+  // Distance helper
+  calculateDistance(fillPercentage, totalHeightCm = 100) {
+    return Math.max(0, Math.round(totalHeightCm * (1 - fillPercentage / 100)));
+  }
+
+  // Render active station dustbins
+  renderAll() {
+    const station = this.getCurrentStation();
+
+    // Update active station header label
+    const stationNameEl = document.getElementById("active-station-name");
+    const stationZoneEl = document.getElementById("active-station-zone");
+    const stationBatteryEl = document.getElementById("active-station-battery");
+
+    if (stationNameEl) stationNameEl.innerText = `${station.id}: ${station.name}`;
+    if (stationZoneEl) stationZoneEl.innerHTML = station.zone;
+    if (stationBatteryEl) stationBatteryEl.innerText = `${station.batteryPercent}%`;
+
+    this.renderBin("compostable", station.compostable);
+    this.renderBin("decomposable", station.decomposable);
+    this.renderStats();
+    this.renderLogs();
+    this.checkThresholdAlerts();
+  }
+
+  renderBin(binKey, binData) {
+    const fill = binData.fillLevel;
+    const distanceCm = this.calculateDistance(fill, binData.totalHeightCm);
+    const litersCurrent = ((fill / 100) * binData.maxCapacityLiters).toFixed(1);
+
+    const fillEl = document.getElementById(`${binKey}-fill`);
+    const percentEl = document.getElementById(`${binKey}-percent`);
+    const distanceEl = document.getElementById(`${binKey}-distance`);
+    const litersEl = document.getElementById(`${binKey}-liters`);
+    const weightEl = document.getElementById(`${binKey}-weight`);
+    const statusBadgeEl = document.getElementById(`${binKey}-status-badge`);
+    const dustbinEl = document.getElementById(`${binKey}-dustbin`);
+    const overflowTimeEl = document.getElementById(`${binKey}-overflow-time`);
+    const lcdScreen = document.getElementById(`${binKey}-lcd-fill`);
+
+    if (fillEl) fillEl.style.height = `${fill}%`;
+    if (percentEl) percentEl.innerText = `${fill}%`;
+    if (distanceEl) distanceEl.innerText = `${distanceCm} cm`;
+    if (litersEl) litersEl.innerText = `${litersCurrent} / ${binData.maxCapacityLiters} L`;
+    if (weightEl) weightEl.innerText = `${binData.weightKg.toFixed(1)} kg`;
+
+    if (lcdScreen) lcdScreen.innerText = `${fill}% (${litersCurrent}L)`;
+
+    if (overflowTimeEl) {
+      if (fill >= 90) {
+        overflowTimeEl.innerHTML = `<span class="text-rose-400 font-bold">Overflow Imminent (&lt; 1 hr)</span>`;
+      } else if (fill >= 75) {
+        overflowTimeEl.innerHTML = `<span class="text-amber-400 font-medium">Approx. 4-6 hrs left</span>`;
+      } else {
+        const remainingHours = Math.round((100 - fill) * 0.4);
+        overflowTimeEl.innerText = `~${remainingHours} hrs to capacity`;
+      }
+    }
+
+    if (statusBadgeEl && dustbinEl) {
+      if (fill >= 80) {
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> Critical Overflow Risk`;
+        dustbinEl.classList.add("critical-bin-alarm");
+      } else if (fill >= 60) {
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Approaching Full`;
+        dustbinEl.classList.remove("critical-bin-alarm");
+      } else {
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Optimal Capacity`;
+        dustbinEl.classList.remove("critical-bin-alarm");
+      }
+    }
+  }
+
+  checkThresholdAlerts() {
+    const alertBanner = document.getElementById("critical-alert-banner");
+    const alertText = document.getElementById("critical-alert-text");
+    if (!alertBanner || !alertText) return;
+
+    // Find any station with >= 80%
+    const criticalStations = Object.values(this.state.stations).filter(s => 
+      s.compostable.fillLevel >= 80 || s.decomposable.fillLevel >= 80
+    );
+
+    if (criticalStations.length > 0) {
+      alertBanner.classList.remove("hidden");
+      const stationNames = criticalStations.map(s => `${s.id} (${Math.max(s.compostable.fillLevel, s.decomposable.fillLevel)}%)`).join(", ");
+      alertText.innerText = `${criticalStations.length} Station(s) Exceeded Capacity: ${stationNames} — Run Smart Route Optimization!`;
+      this.playSound("alarm");
+    } else {
+      alertBanner.classList.add("hidden");
+    }
+  }
+
+  // Motorized lid control
   openLid(binKey, autoCloseMs = 3000) {
-    const bin = this.state.bins[binKey];
+    const station = this.getCurrentStation();
+    const bin = station[binKey];
     if (!bin) return;
 
     const lidEl = document.getElementById(`${binKey}-lid`);
@@ -249,7 +581,6 @@ class SmartBinApp {
 
     this.playSound("servo");
 
-    // Automatically close lid after delay
     if (bin.lidCloseTimeout) clearTimeout(bin.lidCloseTimeout);
     if (autoCloseMs > 0) {
       bin.lidCloseTimeout = setTimeout(() => {
@@ -259,7 +590,8 @@ class SmartBinApp {
   }
 
   closeLid(binKey) {
-    const bin = this.state.bins[binKey];
+    const station = this.getCurrentStation();
+    const bin = station[binKey];
     if (!bin) return;
 
     const lidEl = document.getElementById(`${binKey}-lid`);
@@ -280,13 +612,11 @@ class SmartBinApp {
     this.playSound("clunk");
   }
 
-  // Trigger touchless infrared hand-wave simulation
   waveHandOverBin(binKey) {
     this.openLid(binKey, 3500);
-    this.showToast(`👋 Proximity Sensor: Touchless Lid Opened for ${this.state.bins[binKey].name}`, "info");
+    this.showToast(`👋 Touchless Sensor: Lid Opened for ${binKey.toUpperCase()} at ${this.state.currentStationId}`, "info");
   }
 
-  // Press physical foot pedal
   pressFootPedal(binKey) {
     const pedal = document.getElementById(`${binKey}-foot-pedal`);
     if (pedal) {
@@ -294,15 +624,13 @@ class SmartBinApp {
       setTimeout(() => pedal.classList.remove("pedal-pressed"), 400);
     }
     this.openLid(binKey, 3000);
-    this.showToast(`🦶 Foot Pedal Depressed: ${this.state.bins[binKey].name} Lid Opened`, "info");
+    this.showToast(`🦶 Foot Pedal Depressed: ${binKey.toUpperCase()} Lid Opened`, "info");
   }
 
-  // Animate physical trash falling into the dustbin
   animateTrashDrop(binKey, icon = "🗑️") {
     const dustbinContainer = document.getElementById(`${binKey}-dustbin`);
     if (!dustbinContainer) return;
 
-    // Open lid first
     this.openLid(binKey, 2500);
 
     const dropEl = document.createElement("div");
@@ -313,16 +641,330 @@ class SmartBinApp {
 
     dustbinContainer.appendChild(dropEl);
 
-    setTimeout(() => {
-      this.playSound("drop");
-    }, 450);
-
-    setTimeout(() => {
-      dropEl.remove();
-    }, 1050);
+    setTimeout(() => this.playSound("drop"), 450);
+    setTimeout(() => dropEl.remove(), 1050);
   }
 
-  // Switch Dustbin Aesthetic Model (Smart Kiosk vs Wheelie Bin vs Stainless Steel)
+  depositWaste(binKey, percentAmount, itemName = "Waste Item", icon = "🗑️") {
+    const station = this.getCurrentStation();
+    const bin = station[binKey];
+    if (!bin) return;
+
+    this.animateTrashDrop(binKey, icon);
+
+    const prevLevel = bin.fillLevel;
+    const newLevel = Math.min(100, prevLevel + percentAmount);
+    bin.fillLevel = newLevel;
+
+    const weightIncrease = (percentAmount / 100) * (bin.maxCapacityLiters * 0.35);
+    bin.weightKg = parseFloat((bin.weightKg + weightIncrease).toFixed(1));
+
+    if (binKey === "compostable") {
+      this.state.stats.totalCompostProducedKg += weightIncrease * 0.65;
+      this.state.stats.co2EmissionsSavedKg += weightIncrease * 0.42;
+    } else {
+      this.state.stats.landfillDivertedKg += weightIncrease;
+      this.state.stats.co2EmissionsSavedKg += weightIncrease * 0.28;
+    }
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    this.state.historyLogs.unshift({
+      time: timeStr,
+      station: station.id,
+      type: "deposit",
+      note: `Deposited ${itemName} (+${percentAmount}%) in ${station.id}`
+    });
+
+    this.saveState();
+    this.renderAll();
+    this.renderStationSelector();
+    this.renderFleetGrid();
+    this.updateMapMarker(station.id);
+    this.updateChartsWithLatest();
+
+    this.showToast(`✅ ${itemName} deposited into ${station.id} (+${percentAmount}%)`, "success");
+  }
+
+  emptyBin(binKey) {
+    const station = this.getCurrentStation();
+    const bin = station[binKey];
+    if (!bin) return;
+
+    this.openLid(binKey, 1500);
+
+    const clearedKg = bin.weightKg;
+    bin.fillLevel = 0;
+    bin.weightKg = 0.5;
+
+    this.state.stats.totalPickups += 1;
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    this.state.historyLogs.unshift({
+      time: timeStr,
+      station: station.id,
+      type: "empty",
+      note: `Cleared ${binKey} bin at ${station.id} (${clearedKg.toFixed(1)} kg)`
+    });
+
+    this.saveState();
+    this.renderAll();
+    this.renderStationSelector();
+    this.renderFleetGrid();
+    this.updateMapMarker(station.id);
+    this.updateChartsWithLatest();
+
+    this.showToast(`🎉 ${binKey.toUpperCase()} bin at ${station.id} emptied!`, "info");
+  }
+
+  // =========================================================================
+  // DYNAMIC TSP ROUTE OPTIMIZATION & AUTOMATED TRUCK DISPATCH
+  // =========================================================================
+
+  optimizeAndDispatchRoute() {
+    if (this.state.pickupRouteActive) {
+      this.showToast("🚚 Collection truck is currently on route!", "warning");
+      return;
+    }
+
+    // 1. Identify all stations needing pickup (fill >= 75%)
+    const stationsNeedingPickup = Object.values(this.state.stations).filter(s =>
+      s.compostable.fillLevel >= 75 || s.decomposable.fillLevel >= 75
+    );
+
+    if (stationsNeedingPickup.length === 0) {
+      this.showToast("🟢 All dustbins are currently within safe capacity (<75%). No route needed!", "info");
+      return;
+    }
+
+    this.state.pickupRouteActive = true;
+
+    // 2. Greedy Nearest-Neighbor Route Calculation
+    // Starting from Central Hub -> nearest station -> next nearest -> Hub
+    const routeWaypoints = [CENTRAL_HUB];
+    let unvisited = [...stationsNeedingPickup];
+    let currentPoint = CENTRAL_HUB.coords;
+
+    while (unvisited.length > 0) {
+      let nearestIdx = 0;
+      let minDistance = Infinity;
+
+      for (let i = 0; i < unvisited.length; i++) {
+        const d = this.getHaversineDistance(currentPoint, unvisited[i].coords);
+        if (d < minDistance) {
+          minDistance = d;
+          nearestIdx = i;
+        }
+      }
+
+      const nextStation = unvisited.splice(nearestIdx, 1)[0];
+      routeWaypoints.push(nextStation);
+      currentPoint = nextStation.coords;
+    }
+
+    // Return to Central Bio-Plant
+    routeWaypoints.push(CENTRAL_HUB);
+
+    // 3. Render Route Manifest in UI
+    this.renderRouteManifest(routeWaypoints);
+
+    // 4. Draw Route Polyline on Map
+    const latLngs = routeWaypoints.map(w => w.coords);
+    if (this.routePolyline) {
+      this.map.removeLayer(this.routePolyline);
+    }
+
+    this.routePolyline = L.polyline(latLngs, {
+      color: '#38bdf8',
+      weight: 4,
+      opacity: 0.85,
+      dashArray: '8, 8'
+    }).addTo(this.map);
+
+    this.map.fitBounds(this.routePolyline.getBounds(), { padding: [50, 50] });
+
+    // 5. Animate Truck Traversal along Route
+    this.showToast(`🚛 Smart Route Generated: Visiting ${stationsNeedingPickup.length} full stations`, "success");
+    this.traverseTruckRoute(routeWaypoints);
+  }
+
+  // Haversine distance in km
+  getHaversineDistance(coords1, coords2) {
+    const R = 6371; // Earth radius in km
+    const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+    const dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  renderRouteManifest(waypoints) {
+    const container = document.getElementById("driver-route-manifest");
+    if (!container) return;
+
+    let totalDistKm = 0;
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      totalDistKm += this.getHaversineDistance(waypoints[i].coords, waypoints[i + 1].coords);
+    }
+
+    const fuelSaved = (totalDistKm * 0.42).toFixed(1);
+
+    container.innerHTML = `
+      <div class="p-3.5 rounded-2xl bg-sky-950/40 border border-sky-800/60 mb-3 space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-sky-300">
+          <span class="flex items-center gap-1.5"><i data-lucide="navigation" class="w-4 h-4"></i> Optimal TSP Path Active</span>
+          <span class="font-mono">${totalDistKm.toFixed(1)} km Total</span>
+        </div>
+        <div class="text-[11px] text-slate-300 flex items-center justify-between">
+          <span>Stops: <strong>${waypoints.length - 2} Pickups</strong></span>
+          <span class="text-emerald-400 font-semibold">Fuel Saved: ~${fuelSaved} L diesel</span>
+        </div>
+      </div>
+
+      <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+        ${waypoints.map((wp, idx) => {
+          const isStartOrEnd = wp.id === "HUB-01";
+          return `
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/50 border border-slate-700/60 text-xs">
+              <span class="waypoint-badge">#${idx + 1}</span>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-slate-200 truncate">${wp.name}</div>
+                <div class="text-[10px] text-slate-400 font-mono">${isStartOrEnd ? 'Processing Central Hub' : wp.id + ' Pick Up'}</div>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  // Smooth truck traversal
+  traverseTruckRoute(waypoints) {
+    let currentIdx = 0;
+
+    const visitNextWaypoint = () => {
+      if (currentIdx >= waypoints.length - 1) {
+        // Returned to Hub!
+        this.state.pickupRouteActive = false;
+        this.showToast("🎉 Route Complete: All critical stations emptied & processed at Bio-Plant!", "success");
+        if (this.routePolyline) {
+          this.map.removeLayer(this.routePolyline);
+          this.routePolyline = null;
+        }
+        return;
+      }
+
+      const fromPoint = waypoints[currentIdx].coords;
+      const toPoint = waypoints[currentIdx + 1].coords;
+      const nextTarget = waypoints[currentIdx + 1];
+
+      let progress = 0;
+      const steps = 12;
+
+      const moveTimer = setInterval(() => {
+        progress++;
+        const lat = fromPoint[0] + (toPoint[0] - fromPoint[0]) * (progress / steps);
+        const lng = fromPoint[1] + (toPoint[1] - fromPoint[1]) * (progress / steps);
+
+        if (this.truckMarker) {
+          this.truckMarker.setLatLng([lat, lng]);
+        }
+
+        if (progress >= steps) {
+          clearInterval(moveTimer);
+          currentIdx++;
+
+          // If reached a station (not hub), empty both dustbins!
+          if (nextTarget.id !== "HUB-01") {
+            const station = this.state.stations[nextTarget.id];
+            if (station) {
+              const collected = (station.compostable.weightKg + station.decomposable.weightKg).toFixed(1);
+              station.compostable.fillLevel = 0;
+              station.compostable.weightKg = 0.5;
+              station.decomposable.fillLevel = 0;
+              station.decomposable.weightKg = 0.5;
+
+              this.state.stats.totalPickups += 1;
+              this.state.stats.fuelSavedLiters += 2.4;
+
+              this.updateMapMarker(station.id);
+              this.renderStationSelector();
+              this.renderFleetGrid();
+              this.renderAll();
+
+              this.showToast(`🚛 Collected & Sanitized: ${station.name} (${collected} kg)`, "info");
+            }
+          }
+
+          setTimeout(visitNextWaypoint, 1200);
+        }
+      }, 150);
+    };
+
+    visitNextWaypoint();
+  }
+
+  // Background IoT Telemetry Simulation
+  startIotStream() {
+    if (this.iotTimer) clearInterval(this.iotTimer);
+
+    this.iotTimer = setInterval(() => {
+      if (!this.state.iotSimulating) return;
+
+      const stationKeys = Object.keys(this.state.stations);
+      const randomStationId = stationKeys[Math.floor(Math.random() * stationKeys.length)];
+      const station = this.state.stations[randomStationId];
+
+      const binKey = Math.random() > 0.5 ? "compostable" : "decomposable";
+      const bin = station[binKey];
+
+      if (bin.fillLevel < 95) {
+        const delta = Math.floor(Math.random() * 2) + 1;
+        bin.fillLevel = Math.min(100, bin.fillLevel + delta);
+        bin.weightKg = parseFloat((bin.weightKg + delta * 0.25).toFixed(1));
+
+        if (binKey === "compostable") {
+          bin.temperatureC = parseFloat((36 + Math.random() * 5).toFixed(1));
+        }
+
+        // Update UI if this is the active station
+        if (station.id === this.state.currentStationId) {
+          this.renderBin(binKey, bin);
+        }
+
+        this.updateMapMarker(station.id);
+        this.renderStationSelector();
+        this.renderFleetGrid();
+        this.checkThresholdAlerts();
+      }
+    }, 4500);
+  }
+
+  toggleIotStream() {
+    this.state.iotSimulating = !this.state.iotSimulating;
+    const btn = document.getElementById("toggle-iot-btn");
+    const indicator = document.getElementById("iot-live-indicator");
+
+    if (this.state.iotSimulating) {
+      this.startIotStream();
+      if (btn) btn.innerHTML = `<span class="badge-live-dot"></span><span>Live Fleet Feed</span>`;
+      if (indicator) indicator.classList.remove("opacity-40");
+      this.showToast("⚡ Real-time multi-bin telemetry feed ACTIVE", "info");
+    } else {
+      if (this.iotTimer) clearInterval(this.iotTimer);
+      if (btn) btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Resume Fleet</span>`;
+      if (indicator) indicator.classList.add("opacity-40");
+      this.showToast("⏸️ Fleet feed paused", "info");
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+    this.saveState();
+  }
+
+  // Model Switcher
   applyBinModel(modelClass) {
     this.state.activeModel = modelClass;
     const compBin = document.getElementById("compostable-dustbin");
@@ -335,7 +977,6 @@ class SmartBinApp {
       binEl.classList.add(modelClass);
     });
 
-    // Update active button state
     document.querySelectorAll(".model-select-btn").forEach(btn => {
       if (btn.dataset.model === modelClass) {
         btn.classList.add("bg-emerald-500/20", "text-emerald-300", "border-emerald-500/40");
@@ -349,100 +990,97 @@ class SmartBinApp {
     this.saveState();
   }
 
-  // Calculate distance from sensor (top) to waste surface
-  calculateDistance(fillPercentage, totalHeightCm = 100) {
-    return Math.max(0, Math.round(totalHeightCm * (1 - fillPercentage / 100)));
+  // Map Initialization
+  initMap() {
+    const mapEl = document.getElementById("smartbin-map");
+    if (!mapEl || !window.L) return;
+
+    this.map = L.map("smartbin-map", {
+      zoomControl: false,
+      attributionControl: false
+    }).setView(CENTRAL_HUB.coords, 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+    }).addTo(this.map);
+
+    // 1. Central Bio-Compost Hub Marker
+    const hubIcon = L.divIcon({
+      className: 'custom-map-icon',
+      html: `
+        <div style="background: #3b82f6; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 18px #3b82f6; border: 2.5px solid white;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        </div>
+      `,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    });
+
+    L.marker(CENTRAL_HUB.coords, { icon: hubIcon }).addTo(this.map).bindPopup(`
+      <div style="font-family: var(--font-main); padding: 4px;">
+        <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #38bdf8;">Municipal Bio-Compost Facility</h4>
+        <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Central processing plant & fleet depot</p>
+      </div>
+    `);
+
+    // 2. Collection Truck Marker
+    this.truckMarker = L.marker(CENTRAL_HUB.coords, {
+      icon: L.divIcon({
+        className: 'truck-map-icon',
+        html: `
+          <div style="background: #f59e0b; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f59e0b; border: 2.5px solid white;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      })
+    }).addTo(this.map);
+
+    // 3. Add all Station Markers
+    Object.values(this.state.stations).forEach(station => {
+      this.createOrUpdateStationMarker(station);
+    });
   }
 
-  // Render fill visuals & stats
-  renderAll() {
-    this.renderBin("compostable");
-    this.renderBin("decomposable");
-    this.renderStats();
-    this.renderLogs();
-    this.checkThresholdAlerts();
-    this.updatePickupUI();
-  }
+  createOrUpdateStationMarker(station) {
+    const maxFill = Math.max(station.compostable.fillLevel, station.decomposable.fillLevel);
+    let markerHtml = `<div class="pulse-marker-normal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg></div>`;
 
-  renderBin(binKey) {
-    const bin = this.state.bins[binKey];
-    const fill = bin.fillLevel;
-    const distanceCm = this.calculateDistance(fill, bin.totalHeightCm);
-    const litersCurrent = ((fill / 100) * bin.maxCapacityLiters).toFixed(1);
-    const isCritical = fill >= bin.alertThreshold;
-
-    // Elements
-    const fillEl = document.getElementById(`${binKey}-fill`);
-    const percentEl = document.getElementById(`${binKey}-percent`);
-    const distanceEl = document.getElementById(`${binKey}-distance`);
-    const litersEl = document.getElementById(`${binKey}-liters`);
-    const weightEl = document.getElementById(`${binKey}-weight`);
-    const statusBadgeEl = document.getElementById(`${binKey}-status-badge`);
-    const dustbinEl = document.getElementById(`${binKey}-dustbin`);
-    const overflowTimeEl = document.getElementById(`${binKey}-overflow-time`);
-    const lcdScreen = document.getElementById(`${binKey}-lcd-fill`);
-
-    if (fillEl) fillEl.style.height = `${fill}%`;
-    if (percentEl) percentEl.innerText = `${fill}%`;
-    if (distanceEl) distanceEl.innerText = `${distanceCm} cm`;
-    if (litersEl) litersEl.innerText = `${litersCurrent} / ${bin.maxCapacityLiters} L`;
-    if (weightEl) weightEl.innerText = `${bin.weightKg.toFixed(1)} kg`;
-
-    if (lcdScreen) {
-      lcdScreen.innerText = `${fill}% (${litersCurrent}L)`;
+    if (maxFill >= 80) {
+      markerHtml = `<div class="pulse-marker-critical"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>`;
+    } else if (maxFill >= 60) {
+      markerHtml = `<div class="pulse-marker-warning"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg></div>`;
     }
 
-    if (overflowTimeEl) {
-      if (fill >= 95) {
-        overflowTimeEl.innerHTML = `<span class="text-rose-400 font-bold">Overflow Imminent (&lt; 1 hr)</span>`;
-      } else if (fill >= 80) {
-        overflowTimeEl.innerHTML = `<span class="text-amber-400 font-medium">Approx. 4-6 hrs left</span>`;
-      } else {
-        const remainingHours = Math.round((100 - fill) * 0.4);
-        overflowTimeEl.innerText = `~${remainingHours} hrs to capacity`;
-      }
-    }
+    const icon = L.divIcon({
+      className: 'station-map-marker',
+      html: markerHtml,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    });
 
-    // Status Badge & Border glow
-    if (statusBadgeEl && dustbinEl) {
-      if (fill >= 90) {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> Critical Overflow Risk`;
-        dustbinEl.classList.add("critical-bin-alarm");
-      } else if (fill >= 75) {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Approaching Full`;
-        dustbinEl.classList.remove("critical-bin-alarm");
-      } else if (fill >= 40) {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Moderate Fill`;
-        dustbinEl.classList.remove("critical-bin-alarm");
-      } else {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400"></span> Optimal Capacity`;
-        dustbinEl.classList.remove("critical-bin-alarm");
-      }
-    }
-  }
-
-  checkThresholdAlerts() {
-    const alertBanner = document.getElementById("critical-alert-banner");
-    const alertText = document.getElementById("critical-alert-text");
-    if (!alertBanner || !alertText) return;
-
-    const compFill = this.state.bins.compostable.fillLevel;
-    const decompFill = this.state.bins.decomposable.fillLevel;
-
-    const warnings = [];
-    if (compFill >= 85) warnings.push(`Compostable Dustbin is at ${compFill}% (Sensor: ${this.calculateDistance(compFill)}cm)`);
-    if (decompFill >= 85) warnings.push(`Decomposable Dustbin is at ${decompFill}% (Sensor: ${this.calculateDistance(decompFill)}cm)`);
-
-    if (warnings.length > 0) {
-      alertBanner.classList.remove("hidden");
-      alertText.innerText = warnings.join(" | ") + " — Automated Collection Triggered!";
-      this.playSound("alarm");
+    if (this.stationMarkers[station.id]) {
+      this.stationMarkers[station.id].setIcon(icon);
     } else {
-      alertBanner.classList.add("hidden");
+      const marker = L.marker(station.coords, { icon: icon }).addTo(this.map);
+      marker.bindPopup(`
+        <div style="font-family: var(--font-main); padding: 4px;">
+          <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #10b981;">${station.id}: ${station.name}</h4>
+          <p style="font-size: 11px; margin: 0 0 6px 0; color: #cbd5e1;">Compostable: <strong>${station.compostable.fillLevel}%</strong> | Decomposable: <strong>${station.decomposable.fillLevel}%</strong></p>
+          <button onclick="window.app.switchStation('${station.id}')" style="background: #10b981; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+            Open Dustbin View
+          </button>
+        </div>
+      `);
+      this.stationMarkers[station.id] = marker;
+    }
+  }
+
+  updateMapMarker(stationId) {
+    const station = this.state.stations[stationId];
+    if (station && this.map) {
+      this.createOrUpdateStationMarker(station);
     }
   }
 
@@ -474,7 +1112,7 @@ class SmartBinApp {
         iconColor = "text-blue-400 bg-blue-500/10 border-blue-500/20";
         icon = "refresh-cw";
       } else if (log.type === "alert") {
-        iconColor = "text-amber-400 bg-amber-500/10 border-amber-500/20";
+        iconColor = "text-rose-400 bg-rose-500/10 border-rose-500/20";
         icon = "alert-circle";
       }
 
@@ -485,7 +1123,7 @@ class SmartBinApp {
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-xs font-semibold capitalize text-slate-200">${log.bin} Bin (${log.amount})</span>
+              <span class="text-xs font-semibold text-slate-200">${log.station || 'Station'}</span>
               <span class="text-[10px] font-mono text-slate-400">${log.time}</span>
             </div>
             <p class="text-xs text-slate-400 truncate mt-0.5">${log.note}</p>
@@ -497,196 +1135,87 @@ class SmartBinApp {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  depositWaste(binKey, percentAmount, itemName = "Waste Item", icon = "🗑️") {
-    const bin = this.state.bins[binKey];
-    if (!bin) return;
+  initCharts() {
+    const trendCtx = document.getElementById("fill-trend-chart");
+    const pieCtx = document.getElementById("waste-breakdown-chart");
 
-    // Trigger physical animation
-    this.animateTrashDrop(binKey, icon);
-
-    const prevLevel = bin.fillLevel;
-    const newLevel = Math.min(100, prevLevel + percentAmount);
-    bin.fillLevel = newLevel;
-
-    const weightIncrease = (percentAmount / 100) * (bin.maxCapacityLiters * 0.35);
-    bin.weightKg = parseFloat((bin.weightKg + weightIncrease).toFixed(1));
-
-    if (binKey === "compostable") {
-      this.state.stats.totalCompostProducedKg += weightIncrease * 0.65;
-      this.state.stats.co2EmissionsSavedKg += weightIncrease * 0.42;
-    } else {
-      this.state.stats.landfillDivertedKg += weightIncrease;
-      this.state.stats.co2EmissionsSavedKg += weightIncrease * 0.28;
-    }
-
-    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    this.state.historyLogs.unshift({
-      time: timeStr,
-      type: "deposit",
-      bin: binKey,
-      amount: `+${percentAmount}%`,
-      note: `Deposited ${itemName}`
-    });
-
-    this.saveState();
-    this.renderAll();
-    this.updateChartsWithLatest();
-
-    this.showToast(`✅ ${itemName} deposited into ${bin.name} (+${percentAmount}%)`, "success");
-  }
-
-  emptyBin(binKey) {
-    const bin = this.state.bins[binKey];
-    if (!bin) return;
-
-    this.openLid(binKey, 1500);
-
-    const clearedKg = bin.weightKg;
-    bin.fillLevel = 0;
-    bin.weightKg = 0.5;
-    bin.lastEmptied = new Date().toISOString().replace('T', ' ').substring(0, 16);
-
-    this.state.stats.totalPickups += 1;
-
-    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    this.state.historyLogs.unshift({
-      time: timeStr,
-      type: "empty",
-      bin: binKey,
-      amount: "0%",
-      note: `Emptied & sanitized (${clearedKg.toFixed(1)} kg collected)`
-    });
-
-    this.saveState();
-    this.renderAll();
-    this.updateChartsWithLatest();
-    this.showToast(`🎉 ${bin.name} emptied & sanitized! Ready for new waste.`, "info");
-  }
-
-  startIotStream() {
-    if (this.iotTimer) clearInterval(this.iotTimer);
-
-    this.iotTimer = setInterval(() => {
-      if (!this.state.iotSimulating) return;
-
-      const roll = Math.random();
-      if (roll > 0.65) {
-        const binKey = Math.random() > 0.5 ? "compostable" : "decomposable";
-        const bin = this.state.bins[binKey];
-
-        if (bin.fillLevel < 95) {
-          const delta = Math.floor(Math.random() * 2) + 1;
-          bin.fillLevel = Math.min(100, bin.fillLevel + delta);
-          bin.weightKg = parseFloat((bin.weightKg + delta * 0.25).toFixed(1));
-
-          if (binKey === "compostable") {
-            bin.temperatureC = parseFloat((37 + Math.random() * 4).toFixed(1));
+    if (trendCtx && window.Chart) {
+      this.charts.trend = new Chart(trendCtx, {
+        type: "line",
+        data: {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"],
+          datasets: [
+            {
+              label: "Compostable Avg (%)",
+              data: [42, 58, 30, 65, 52, 70, this.getCurrentStation().compostable.fillLevel],
+              borderColor: "#10b981",
+              backgroundColor: "rgba(16, 185, 129, 0.15)",
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true
+            },
+            {
+              label: "Decomposable Avg (%)",
+              data: [35, 45, 50, 40, 60, 55, this.getCurrentStation().decomposable.fillLevel],
+              borderColor: "#f59e0b",
+              backgroundColor: "rgba(245, 158, 11, 0.12)",
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#94a3b8" } } },
+          scales: {
+            y: { min: 0, max: 100, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#94a3b8", callback: (val) => val + "%" } },
+            x: { grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#94a3b8" } }
           }
-
-          this.renderBin(binKey);
-          this.checkThresholdAlerts();
         }
-      }
-    }, 4500);
-  }
-
-  toggleIotStream() {
-    this.state.iotSimulating = !this.state.iotSimulating;
-    const btn = document.getElementById("toggle-iot-btn");
-    const indicator = document.getElementById("iot-live-indicator");
-
-    if (this.state.iotSimulating) {
-      this.startIotStream();
-      if (btn) btn.innerHTML = `<span class="badge-live-dot"></span><span>Live IoT Feed</span>`;
-      if (indicator) indicator.classList.remove("opacity-40");
-      this.showToast("⚡ Real-time IoT sensor telemetry feed ACTIVE", "info");
-    } else {
-      if (this.iotTimer) clearInterval(this.iotTimer);
-      if (btn) btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Resume Feed</span>`;
-      if (indicator) indicator.classList.add("opacity-40");
-      this.showToast("⏸️ IoT feed paused (Manual Mode)", "info");
+      });
     }
 
-    if (window.lucide) window.lucide.createIcons();
-    this.saveState();
-  }
-
-  requestPickup() {
-    if (this.state.pickupStatus.requested) {
-      this.showToast("🚚 Collection truck is already en route!", "warning");
-      return;
-    }
-
-    this.state.pickupStatus = {
-      requested: true,
-      truckEtaMinutes: 10,
-      truckStep: 0,
-      requestId: "REQ-" + Math.floor(1000 + Math.random() * 9000)
-    };
-
-    this.updatePickupUI();
-    this.animateTruckPickup();
-    this.showToast("🚛 Smart Dispatch: Municipal Truck routed to Station #104 (ETA: 10 mins)", "success");
-    this.saveState();
-  }
-
-  updatePickupUI() {
-    const banner = document.getElementById("truck-dispatch-status");
-    const reqBtn = document.getElementById("request-pickup-btn");
-    const etaText = document.getElementById("truck-eta-text");
-    const reqIdText = document.getElementById("truck-req-id");
-
-    if (!banner || !reqBtn) return;
-
-    if (this.state.pickupStatus.requested) {
-      banner.classList.remove("hidden");
-      reqBtn.disabled = true;
-      reqBtn.classList.add("opacity-50", "cursor-not-allowed");
-      if (etaText) etaText.innerText = `${this.state.pickupStatus.truckEtaMinutes} mins`;
-      if (reqIdText) reqIdText.innerText = this.state.pickupStatus.requestId;
-    } else {
-      banner.classList.add("hidden");
-      reqBtn.disabled = false;
-      reqBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    if (pieCtx && window.Chart) {
+      const station = this.getCurrentStation();
+      this.charts.pie = new Chart(pieCtx, {
+        type: "doughnut",
+        data: {
+          labels: ["Compostable (Wet Organic)", "Decomposable (Dry Fibers)"],
+          datasets: [{
+            data: [station.compostable.fillLevel || 1, station.decomposable.fillLevel || 1],
+            backgroundColor: ["#10b981", "#f59e0b"],
+            borderWidth: 2,
+            borderColor: "#0f172a"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "bottom", labels: { color: "#94a3b8" } } },
+          cutout: "68%"
+        }
+      });
     }
   }
 
-  animateTruckPickup() {
-    if (!this.map || !this.state.pickupStatus.requested) return;
-
-    const startPos = [12.9716, 77.5946];
-    const binPos = [12.9850, 77.6100];
-
-    let step = 0;
-    const totalSteps = 5;
-
-    const truckInterval = setInterval(() => {
-      step++;
-      const lat = startPos[0] + (binPos[0] - startPos[0]) * (step / totalSteps);
-      const lng = startPos[1] + (binPos[1] - startPos[1]) * (step / totalSteps);
-
-      if (this.truckMarker) {
-        this.truckMarker.setLatLng([lat, lng]);
-      }
-
-      this.state.pickupStatus.truckEtaMinutes = Math.max(1, 10 - step * 2);
-      this.updatePickupUI();
-
-      if (step >= totalSteps) {
-        clearInterval(truckInterval);
-        this.emptyBin("compostable");
-        this.emptyBin("decomposable");
-
-        this.state.pickupStatus = {
-          requested: false,
-          truckEtaMinutes: null,
-          truckStep: 0,
-          requestId: null
-        };
-        this.updatePickupUI();
-        this.showToast("🎉 Waste Collection Complete! Both dustbins emptied & sanitized.", "success");
-      }
-    }, 2400);
+  updateChartsWithLatest() {
+    const station = this.getCurrentStation();
+    if (this.charts.trend) {
+      const compData = this.charts.trend.data.datasets[0].data;
+      const decompData = this.charts.trend.data.datasets[1].data;
+      compData[compData.length - 1] = station.compostable.fillLevel;
+      decompData[decompData.length - 1] = station.decomposable.fillLevel;
+      this.charts.trend.update();
+    }
+    if (this.charts.pie) {
+      this.charts.pie.data.datasets[0].data = [
+        station.compostable.fillLevel || 1,
+        station.decomposable.fillLevel || 1
+      ];
+      this.charts.pie.update();
+    }
   }
 
   searchWasteItem(query) {
@@ -781,172 +1310,6 @@ class SmartBinApp {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  initCharts() {
-    const trendCtx = document.getElementById("fill-trend-chart");
-    const pieCtx = document.getElementById("waste-breakdown-chart");
-
-    if (trendCtx && window.Chart) {
-      this.charts.trend = new Chart(trendCtx, {
-        type: "line",
-        data: {
-          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"],
-          datasets: [
-            {
-              label: "Compostable Dustbin (%)",
-              data: [35, 52, 20, 64, 45, 58, this.state.bins.compostable.fillLevel],
-              borderColor: "#10b981",
-              backgroundColor: "rgba(16, 185, 129, 0.15)",
-              borderWidth: 2.5,
-              tension: 0.35,
-              fill: true,
-              pointBackgroundColor: "#10b981"
-            },
-            {
-              label: "Decomposable Dustbin (%)",
-              data: [25, 38, 55, 30, 48, 62, this.state.bins.decomposable.fillLevel],
-              borderColor: "#f59e0b",
-              backgroundColor: "rgba(245, 158, 11, 0.12)",
-              borderWidth: 2.5,
-              tension: 0.35,
-              fill: true,
-              pointBackgroundColor: "#f59e0b"
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: "#94a3b8" } }
-          },
-          scales: {
-            y: {
-              min: 0,
-              max: 100,
-              grid: { color: "rgba(255, 255, 255, 0.05)" },
-              ticks: { color: "#94a3b8", callback: (val) => val + "%" }
-            },
-            x: {
-              grid: { color: "rgba(255, 255, 255, 0.05)" },
-              ticks: { color: "#94a3b8" }
-            }
-          }
-        }
-      });
-    }
-
-    if (pieCtx && window.Chart) {
-      this.charts.pie = new Chart(pieCtx, {
-        type: "doughnut",
-        data: {
-          labels: ["Compostable (Wet Organic)", "Decomposable (Dry Fibers)"],
-          datasets: [{
-            data: [this.state.bins.compostable.fillLevel || 1, this.state.bins.decomposable.fillLevel || 1],
-            backgroundColor: ["#10b981", "#f59e0b"],
-            borderWidth: 2,
-            borderColor: "#0f172a"
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: "bottom", labels: { color: "#94a3b8" } }
-          },
-          cutout: "68%"
-        }
-      });
-    }
-  }
-
-  updateChartsWithLatest() {
-    if (this.charts.trend) {
-      const compData = this.charts.trend.data.datasets[0].data;
-      const decompData = this.charts.trend.data.datasets[1].data;
-      compData[compData.length - 1] = this.state.bins.compostable.fillLevel;
-      decompData[decompData.length - 1] = this.state.bins.decomposable.fillLevel;
-      this.charts.trend.update();
-    }
-    if (this.charts.pie) {
-      this.charts.pie.data.datasets[0].data = [
-        this.state.bins.compostable.fillLevel || 1,
-        this.state.bins.decomposable.fillLevel || 1
-      ];
-      this.charts.pie.update();
-    }
-  }
-
-  initMap() {
-    const mapEl = document.getElementById("smartbin-map");
-    if (!mapEl || !window.L) return;
-
-    const binCoords = [12.9850, 77.6100];
-    const hubCoords = [12.9716, 77.5946];
-
-    this.map = L.map("smartbin-map", {
-      zoomControl: false,
-      attributionControl: false
-    }).setView(binCoords, 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-    }).addTo(this.map);
-
-    const createMarkerIcon = (color) => {
-      return L.divIcon({
-        className: 'custom-map-icon',
-        html: `
-          <div style="background: ${color}; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px ${color}; border: 2px solid white;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-          </div>
-        `,
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
-      });
-    };
-
-    this.binMarker = L.marker(binCoords, { icon: createMarkerIcon("#10b981") }).addTo(this.map);
-    this.binMarker.bindPopup(`
-      <div style="font-family: var(--font-main); padding: 4px;">
-        <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #10b981;">Dustbin Station #104</h4>
-        <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Compostable: ${this.state.bins.compostable.fillLevel}% | Decomposable: ${this.state.bins.decomposable.fillLevel}%</p>
-      </div>
-    `);
-
-    const hubIcon = L.divIcon({
-      className: 'custom-map-icon',
-      html: `
-        <div style="background: #3b82f6; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #3b82f6; border: 2px solid white;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-        </div>
-      `,
-      iconSize: [34, 34],
-      iconAnchor: [17, 17]
-    });
-
-    L.marker(hubCoords, { icon: hubIcon }).addTo(this.map);
-
-    this.truckMarker = L.marker(hubCoords, {
-      icon: L.divIcon({
-        className: 'truck-map-icon',
-        html: `
-          <div style="background: #f59e0b; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px #f59e0b; border: 2px solid white;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
-          </div>
-        `,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      })
-    }).addTo(this.map);
-
-    this.routeLine = L.polyline([hubCoords, [12.9780, 77.6010], binCoords], {
-      color: '#38bdf8',
-      weight: 3,
-      opacity: 0.7,
-      dashArray: '8, 8'
-    }).addTo(this.map);
-  }
-
   showToast(message, type = "info") {
     const container = document.getElementById("toast-container");
     if (!container) return;
@@ -960,9 +1323,7 @@ class SmartBinApp {
     toast.innerHTML = message;
 
     container.appendChild(toast);
-    requestAnimationFrame(() => {
-      toast.classList.remove("translate-y-2", "opacity-0");
-    });
+    requestAnimationFrame(() => toast.classList.remove("translate-y-2", "opacity-0"));
 
     setTimeout(() => {
       toast.classList.add("translate-y-2", "opacity-0");
@@ -971,7 +1332,7 @@ class SmartBinApp {
   }
 
   setupEventListeners() {
-    // Model switcher buttons
+    // Model select buttons
     document.querySelectorAll(".model-select-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const model = btn.dataset.model;
@@ -1000,7 +1361,8 @@ class SmartBinApp {
     document.querySelectorAll(".dustbin-lid").forEach(lid => {
       lid.addEventListener("click", () => {
         const binKey = lid.dataset.lidBin;
-        if (this.state.bins[binKey].lidOpen) {
+        const station = this.getCurrentStation();
+        if (station[binKey].lidOpen) {
           this.closeLid(binKey);
         } else {
           this.openLid(binKey, 3000);
@@ -1008,7 +1370,7 @@ class SmartBinApp {
       });
     });
 
-    // Deposit buttons with item icon support
+    // Deposit buttons
     document.querySelectorAll("[data-deposit-bin]").forEach(btn => {
       btn.addEventListener("click", () => {
         const bin = btn.dataset.depositBin;
@@ -1023,7 +1385,7 @@ class SmartBinApp {
     document.querySelectorAll("[data-empty-bin]").forEach(btn => {
       btn.addEventListener("click", () => {
         const bin = btn.dataset.emptyBin;
-        if (confirm(`Confirm emptying the ${bin.toUpperCase()} dustbin?`)) {
+        if (confirm(`Confirm emptying the ${bin.toUpperCase()} dustbin at ${this.state.currentStationId}?`)) {
           this.emptyBin(bin);
         }
       });
@@ -1049,18 +1411,16 @@ class SmartBinApp {
       });
     }
 
-    // Request pickup button
-    const reqPickupBtn = document.getElementById("request-pickup-btn");
-    if (reqPickupBtn) {
-      reqPickupBtn.addEventListener("click", () => this.requestPickup());
+    // Optimize Route Button
+    const optimizeBtn = document.getElementById("optimize-route-btn");
+    if (optimizeBtn) {
+      optimizeBtn.addEventListener("click", () => this.optimizeAndDispatchRoute());
     }
 
     // Classifier search input
     const searchInput = document.getElementById("waste-search-input");
     if (searchInput) {
-      searchInput.addEventListener("input", (e) => {
-        this.searchWasteItem(e.target.value);
-      });
+      searchInput.addEventListener("input", (e) => this.searchWasteItem(e.target.value));
     }
 
     // Quick tag search buttons
@@ -1077,20 +1437,20 @@ class SmartBinApp {
     // Sliders
     const compSlider = document.getElementById("slider-compostable");
     if (compSlider) {
-      compSlider.value = this.state.bins.compostable.fillLevel;
+      compSlider.value = this.getCurrentStation().compostable.fillLevel;
       compSlider.addEventListener("input", (e) => {
-        this.state.bins.compostable.fillLevel = parseInt(e.target.value, 10);
-        this.renderBin("compostable");
+        this.getCurrentStation().compostable.fillLevel = parseInt(e.target.value, 10);
+        this.renderBin("compostable", this.getCurrentStation().compostable);
         this.updateChartsWithLatest();
       });
     }
 
     const decompSlider = document.getElementById("slider-decomposable");
     if (decompSlider) {
-      decompSlider.value = this.state.bins.decomposable.fillLevel;
+      decompSlider.value = this.getCurrentStation().decomposable.fillLevel;
       decompSlider.addEventListener("input", (e) => {
-        this.state.bins.decomposable.fillLevel = parseInt(e.target.value, 10);
-        this.renderBin("decomposable");
+        this.getCurrentStation().decomposable.fillLevel = parseInt(e.target.value, 10);
+        this.renderBin("decomposable", this.getCurrentStation().decomposable);
         this.updateChartsWithLatest();
       });
     }
