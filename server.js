@@ -99,7 +99,28 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // --- STATIC FILE SERVER ---
+  // --- STATIC FILE & ROUTE SERVER ---
+  if (pathname === '/admin.html') {
+    res.writeHead(301, { 'Location': '/admin' });
+    res.end();
+    return;
+  }
+
+  // Dedicated /admin route (only accessed via /admin)
+  if (pathname === '/admin' || pathname === '/admin/') {
+    const adminPath = path.join(__dirname, 'admin.html');
+    fs.stat(adminPath, (err, stats) => {
+      if (err || !stats.isFile()) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 Not Found');
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      fs.createReadStream(adminPath).pipe(res);
+    });
+    return;
+  }
+
   let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
 
   fs.stat(filePath, (err, stats) => {

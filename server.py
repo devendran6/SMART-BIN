@@ -56,6 +56,17 @@ class SmartBinRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(bin_state, indent=2).encode('utf-8'))
             return
         
+        # Redirect direct .html requests to /admin
+        if parsed.path == '/admin.html':
+            self.send_response(301)
+            self.send_header('Location', '/admin')
+            self.end_headers()
+            return
+
+        # Dedicated /admin route (only accessed via /admin)
+        if parsed.path in ['/admin', '/admin/']:
+            self.path = '/admin.html'
+
         # Fall back to standard static file serving
         return super().do_GET()
 
