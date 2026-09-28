@@ -1,6 +1,6 @@
 /**
- * EcoPulse SmartBin OS - Multi-Location Fleet & Route Engine
- * Real-Life Municipal Waste Management across Multiple Dustbin Stations
+ * EcoPulse SmartBin OS - Multi-Location Fleet & Role Engine
+ * Dual Portals: Citizen User View & Municipal Admin View
  */
 
 const CENTRAL_HUB = {
@@ -16,6 +16,7 @@ const INITIAL_STATIONS = {
     id: "BIN-101",
     name: "University Food Court & Cafeteria",
     zone: "Sector 1 &bull; Campus Area",
+    distanceMeters: 450,
     coords: [12.9820, 77.5880],
     batteryPercent: 94,
     solarCharging: true,
@@ -42,6 +43,7 @@ const INITIAL_STATIONS = {
     id: "BIN-102",
     name: "Tech Park & Corporate Plaza",
     zone: "Sector 3 &bull; IT Corridor",
+    distanceMeters: 850,
     coords: [12.9640, 77.6110],
     batteryPercent: 98,
     solarCharging: true,
@@ -68,6 +70,7 @@ const INITIAL_STATIONS = {
     id: "BIN-103",
     name: "Metro Transit & City Plaza",
     zone: "Sector 2 &bull; Commercial Zone",
+    distanceMeters: 620,
     coords: [12.9910, 77.6080],
     batteryPercent: 91,
     solarCharging: false,
@@ -94,6 +97,7 @@ const INITIAL_STATIONS = {
     id: "BIN-104",
     name: "Green Civic Hub & Botanical Garden",
     zone: "Sector 4 &bull; Eco Park",
+    distanceMeters: 120,
     coords: [12.9850, 77.6100],
     batteryPercent: 96,
     solarCharging: true,
@@ -120,6 +124,7 @@ const INITIAL_STATIONS = {
     id: "BIN-105",
     name: "City General Hospital & Medical Zone",
     zone: "Sector 5 &bull; Health Quarter",
+    distanceMeters: 980,
     coords: [12.9580, 77.5850],
     batteryPercent: 99,
     solarCharging: true,
@@ -179,12 +184,15 @@ class SmartBinApp {
 
   loadState() {
     try {
-      const saved = localStorage.getItem("ecopulse_smartbin_fleet_state");
+      const saved = localStorage.getItem("ecopulse_smartbin_role_state");
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
+          currentRole: parsed.currentRole || "citizen", // "citizen" or "admin"
           currentStationId: parsed.currentStationId || "BIN-104",
           activeModel: parsed.activeModel || "model-smart-kiosk",
+          citizenPoints: parsed.citizenPoints || 140,
+          citizenRank: parsed.citizenRank || "Eco-Champion",
           stations: { ...INITIAL_STATIONS, ...parsed.stations },
           iotSimulating: parsed.iotSimulating ?? true,
           audioAlertsEnabled: parsed.audioAlertsEnabled ?? true,
@@ -192,7 +200,7 @@ class SmartBinApp {
           historyLogs: parsed.historyLogs || [
             { time: "18:45:10", station: "BIN-101", type: "alert", note: "Compostable bin exceeded 85% capacity" },
             { time: "17:20:04", station: "BIN-102", type: "alert", note: "Decomposable packaging reached 84%" },
-            { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Organic food scraps deposited (+10%)" }
+            { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Citizen earned +10 Eco-Points for organic disposal" }
           ],
           stats: parsed.stats || {
             totalCompostProducedKg: 284.5,
@@ -208,8 +216,11 @@ class SmartBinApp {
     }
 
     return {
+      currentRole: "citizen",
       currentStationId: "BIN-104",
       activeModel: "model-smart-kiosk",
+      citizenPoints: 140,
+      citizenRank: "Eco-Champion",
       stations: JSON.parse(JSON.stringify(INITIAL_STATIONS)),
       iotSimulating: true,
       audioAlertsEnabled: true,
@@ -217,7 +228,7 @@ class SmartBinApp {
       historyLogs: [
         { time: "18:45:10", station: "BIN-101", type: "alert", note: "Compostable bin exceeded 85% capacity" },
         { time: "17:20:04", station: "BIN-102", type: "alert", note: "Decomposable packaging reached 84%" },
-        { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Organic food scraps deposited (+10%)" }
+        { time: "15:05:32", station: "BIN-104", type: "deposit", note: "Citizen earned +10 Eco-Points for organic disposal" }
       ],
       stats: {
         totalCompostProducedKg: 284.5,
@@ -231,7 +242,7 @@ class SmartBinApp {
 
   saveState() {
     try {
-      localStorage.setItem("ecopulse_smartbin_fleet_state", JSON.stringify(this.state));
+      localStorage.setItem("ecopulse_smartbin_role_state", JSON.stringify(this.state));
     } catch (e) {
       console.error("Failed to save state:", e);
     }
@@ -242,6 +253,7 @@ class SmartBinApp {
   }
 
   init() {
+    this.applyRole(this.state.currentRole);
     this.renderStationSelector();
     this.renderFleetGrid();
     this.renderAll();
@@ -254,22 +266,97 @@ class SmartBinApp {
     }
   }
 
-  // Populate floating waste icons inside the acrylic window
-  populateInternalFloatingItems(binKey, icons) {
-    const container = document.getElementById(`${binKey}-stacked-icons`);
-    if (!container) return;
-    container.innerHTML = "";
+  // =========================================================================
+  // ROLE SWITCHING: CITIZEN USER vs MUNICIPAL ADMIN
+  // =========================================================================
 
-    icons.forEach((icon, i) => {
-      const el = document.createElement("div");
-      el.className = "floating-waste-badge";
-      el.innerText = icon;
-      el.style.left = `${12 + (i % 4) * 22}%`;
-      el.style.bottom = `${15 + (i * 14)}%`;
-      el.style.animationDelay = `${i * 0.7}s`;
-      el.style.animationDuration = `${3.5 + (i % 2)}s`;
-      container.appendChild(el);
+  applyRole(role) {
+    this.state.currentRole = role;
+    document.body.classList.remove("mode-citizen", "mode-admin");
+    document.body.classList.add(role === "admin" ? "mode-admin" : "mode-citizen");
+
+    // Update buttons in switcher
+    const citizenBtn = document.getElementById("role-btn-citizen");
+    const adminBtn = document.getElementById("role-btn-admin");
+    const portalTag = document.getElementById("portal-badge-tag");
+
+    if (citizenBtn && adminBtn) {
+      if (role === "admin") {
+        adminBtn.className = "role-switch-btn active-admin";
+        citizenBtn.className = "role-switch-btn";
+        if (portalTag) {
+          portalTag.innerText = "MUNICIPAL ADMIN & FLEET COMMAND";
+          portalTag.className = "text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold";
+        }
+        this.showToast("🛡️ Switched to Municipal Admin & Fleet Operations Mode", "info");
+      } else {
+        citizenBtn.className = "role-switch-btn active-citizen";
+        adminBtn.className = "role-switch-btn";
+        if (portalTag) {
+          portalTag.innerText = "CITIZEN ECO-PORTAL";
+          portalTag.className = "text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold";
+        }
+        this.showToast("👤 Switched to Citizen / Public User Mode", "info");
+      }
+    }
+
+    this.saveState();
+  }
+
+  // Citizen adds Eco-Points on disposal
+  addCitizenPoints(pts = 10) {
+    this.state.citizenPoints += pts;
+    if (this.state.citizenPoints >= 300) {
+      this.state.citizenRank = "Eco-Guardian 🌟";
+    } else if (this.state.citizenPoints >= 150) {
+      this.state.citizenRank = "Eco-Champion 🌿";
+    }
+
+    const ptsEl = document.getElementById("citizen-points-counter");
+    const rankEl = document.getElementById("citizen-rank-label");
+    if (ptsEl) ptsEl.innerText = `${this.state.citizenPoints} Pts`;
+    if (rankEl) rankEl.innerText = this.state.citizenRank;
+
+    this.saveState();
+  }
+
+  // Citizen Issue Reporting
+  submitCitizenReport(issueType, issueText) {
+    const station = this.getCurrentStation();
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    this.state.historyLogs.unshift({
+      time: timeStr,
+      station: station.id,
+      type: "alert",
+      note: `[CITIZEN REPORT] ${issueType}: ${issueText}`
     });
+
+    this.saveState();
+    this.renderLogs();
+    this.showToast(`🚨 Report submitted for ${station.id}. Municipal team alerted!`, "warning");
+    
+    // Close modal
+    const modal = document.getElementById("citizen-report-modal");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  // Admin CSV Telemetry Export
+  exportTelemetryCSV() {
+    let csv = "Station ID,Station Name,Compostable Fill (%),Decomposable Fill (%),Battery (%),Solar Status\n";
+    Object.values(this.state.stations).forEach(s => {
+      csv += `"${s.id}","${s.name.replace(/"/g, '""')}",${s.compostable.fillLevel},${s.decomposable.fillLevel},${s.batteryPercent}%,"${s.solarCharging ? 'Yes' : 'No'}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `EcoPulse_Fleet_Telemetry_${new Date().toISOString().substring(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    this.showToast("📄 Fleet telemetry CSV downloaded successfully!", "success");
   }
 
   // Audio synthesis
@@ -404,7 +491,6 @@ class SmartBinApp {
           <h5 class="text-xs font-semibold text-slate-200 line-clamp-1 mb-1">${station.name}</h5>
           <p class="text-[11px] text-slate-400 mb-3">${station.zone}</p>
 
-          <!-- Dual Progress Bars -->
           <div class="space-y-1.5 text-[11px] font-mono">
             <div>
               <div class="flex justify-between text-slate-400 text-[10px]">
@@ -428,7 +514,7 @@ class SmartBinApp {
 
           <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
             <span class="flex items-center gap-1">
-              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-400"></i> ${station.batteryPercent}% Solar
+              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-400"></i> ${station.batteryPercent}%
             </span>
             <span class="text-sky-400 font-semibold hover:underline">Select &rarr;</span>
           </div>
@@ -451,7 +537,6 @@ class SmartBinApp {
     this.renderFleetGrid();
     this.renderAll();
 
-    // Pan map to new station
     if (this.map && station.coords) {
       this.map.flyTo(station.coords, 14, { animate: true, duration: 1.2 });
       if (this.stationMarkers[stationId]) {
@@ -459,26 +544,31 @@ class SmartBinApp {
       }
     }
 
-    this.showToast(`📍 Switched monitoring view to: ${station.name}`, "info");
+    this.showToast(`📍 Selected ${station.id}: ${station.name}`, "info");
   }
 
-  // Distance helper
   calculateDistance(fillPercentage, totalHeightCm = 100) {
     return Math.max(0, Math.round(totalHeightCm * (1 - fillPercentage / 100)));
   }
 
-  // Render active station dustbins
   renderAll() {
     const station = this.getCurrentStation();
 
-    // Update active station header label
     const stationNameEl = document.getElementById("active-station-name");
     const stationZoneEl = document.getElementById("active-station-zone");
     const stationBatteryEl = document.getElementById("active-station-battery");
+    const citizenDistEl = document.getElementById("citizen-nearest-distance");
 
     if (stationNameEl) stationNameEl.innerText = `${station.id}: ${station.name}`;
     if (stationZoneEl) stationZoneEl.innerHTML = station.zone;
     if (stationBatteryEl) stationBatteryEl.innerText = `${station.batteryPercent}%`;
+    if (citizenDistEl) citizenDistEl.innerText = `${station.distanceMeters || 120}m away`;
+
+    // Eco points in citizen header
+    const ptsEl = document.getElementById("citizen-points-counter");
+    const rankEl = document.getElementById("citizen-rank-label");
+    if (ptsEl) ptsEl.innerText = `${this.state.citizenPoints} Pts`;
+    if (rankEl) rankEl.innerText = this.state.citizenRank;
 
     this.renderBin("compostable", station.compostable);
     this.renderBin("decomposable", station.decomposable);
@@ -543,7 +633,6 @@ class SmartBinApp {
     const alertText = document.getElementById("critical-alert-text");
     if (!alertBanner || !alertText) return;
 
-    // Find any station with >= 80%
     const criticalStations = Object.values(this.state.stations).filter(s => 
       s.compostable.fillLevel >= 80 || s.decomposable.fillLevel >= 80
     );
@@ -558,7 +647,6 @@ class SmartBinApp {
     }
   }
 
-  // Motorized lid control
   openLid(binKey, autoCloseMs = 3000) {
     const station = this.getCurrentStation();
     const bin = station[binKey];
@@ -667,6 +755,9 @@ class SmartBinApp {
       this.state.stats.co2EmissionsSavedKg += weightIncrease * 0.28;
     }
 
+    // Award Eco-Points in Citizen Mode
+    this.addCitizenPoints(10);
+
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     this.state.historyLogs.unshift({
       time: timeStr,
@@ -682,7 +773,7 @@ class SmartBinApp {
     this.updateMapMarker(station.id);
     this.updateChartsWithLatest();
 
-    this.showToast(`✅ ${itemName} deposited into ${station.id} (+${percentAmount}%)`, "success");
+    this.showToast(`✅ ${itemName} deposited! +10 Eco-Points earned 🌿`, "success");
   }
 
   emptyBin(binKey) {
@@ -703,7 +794,7 @@ class SmartBinApp {
       time: timeStr,
       station: station.id,
       type: "empty",
-      note: `Cleared ${binKey} bin at ${station.id} (${clearedKg.toFixed(1)} kg)`
+      note: `[ADMIN ACTION] Cleared ${binKey} bin at ${station.id} (${clearedKg.toFixed(1)} kg)`
     });
 
     this.saveState();
@@ -717,7 +808,7 @@ class SmartBinApp {
   }
 
   // =========================================================================
-  // DYNAMIC TSP ROUTE OPTIMIZATION & AUTOMATED TRUCK DISPATCH
+  // DYNAMIC TSP ROUTE OPTIMIZATION (ADMIN FEATURE)
   // =========================================================================
 
   optimizeAndDispatchRoute() {
@@ -726,7 +817,6 @@ class SmartBinApp {
       return;
     }
 
-    // 1. Identify all stations needing pickup (fill >= 75%)
     const stationsNeedingPickup = Object.values(this.state.stations).filter(s =>
       s.compostable.fillLevel >= 75 || s.decomposable.fillLevel >= 75
     );
@@ -738,8 +828,6 @@ class SmartBinApp {
 
     this.state.pickupRouteActive = true;
 
-    // 2. Greedy Nearest-Neighbor Route Calculation
-    // Starting from Central Hub -> nearest station -> next nearest -> Hub
     const routeWaypoints = [CENTRAL_HUB];
     let unvisited = [...stationsNeedingPickup];
     let currentPoint = CENTRAL_HUB.coords;
@@ -761,13 +849,10 @@ class SmartBinApp {
       currentPoint = nextStation.coords;
     }
 
-    // Return to Central Bio-Plant
     routeWaypoints.push(CENTRAL_HUB);
 
-    // 3. Render Route Manifest in UI
     this.renderRouteManifest(routeWaypoints);
 
-    // 4. Draw Route Polyline on Map
     const latLngs = routeWaypoints.map(w => w.coords);
     if (this.routePolyline) {
       this.map.removeLayer(this.routePolyline);
@@ -782,14 +867,12 @@ class SmartBinApp {
 
     this.map.fitBounds(this.routePolyline.getBounds(), { padding: [50, 50] });
 
-    // 5. Animate Truck Traversal along Route
     this.showToast(`🚛 Smart Route Generated: Visiting ${stationsNeedingPickup.length} full stations`, "success");
     this.traverseTruckRoute(routeWaypoints);
   }
 
-  // Haversine distance in km
   getHaversineDistance(coords1, coords2) {
-    const R = 6371; // Earth radius in km
+    const R = 6371;
     const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
     const dLng = (coords2[1] - coords1[1]) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -841,13 +924,11 @@ class SmartBinApp {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  // Smooth truck traversal
   traverseTruckRoute(waypoints) {
     let currentIdx = 0;
 
     const visitNextWaypoint = () => {
       if (currentIdx >= waypoints.length - 1) {
-        // Returned to Hub!
         this.state.pickupRouteActive = false;
         this.showToast("🎉 Route Complete: All critical stations emptied & processed at Bio-Plant!", "success");
         if (this.routePolyline) {
@@ -877,7 +958,6 @@ class SmartBinApp {
           clearInterval(moveTimer);
           currentIdx++;
 
-          // If reached a station (not hub), empty both dustbins!
           if (nextTarget.id !== "HUB-01") {
             const station = this.state.stations[nextTarget.id];
             if (station) {
@@ -895,7 +975,7 @@ class SmartBinApp {
               this.renderFleetGrid();
               this.renderAll();
 
-              this.showToast(`🚛 Collected & Sanitized: ${station.name} (${collected} kg)`, "info");
+              this.showToast(`🚛 Cleared & Sanitized: ${station.name} (${collected} kg)`, "info");
             }
           }
 
@@ -930,7 +1010,6 @@ class SmartBinApp {
           bin.temperatureC = parseFloat((36 + Math.random() * 5).toFixed(1));
         }
 
-        // Update UI if this is the active station
         if (station.id === this.state.currentStationId) {
           this.renderBin(binKey, bin);
         }
@@ -950,21 +1029,20 @@ class SmartBinApp {
 
     if (this.state.iotSimulating) {
       this.startIotStream();
-      if (btn) btn.innerHTML = `<span class="badge-live-dot"></span><span>Live Fleet Feed</span>`;
+      if (btn) btn.innerHTML = `<span class="badge-live-dot"></span><span>Live Feed</span>`;
       if (indicator) indicator.classList.remove("opacity-40");
       this.showToast("⚡ Real-time multi-bin telemetry feed ACTIVE", "info");
     } else {
       if (this.iotTimer) clearInterval(this.iotTimer);
-      if (btn) btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Resume Fleet</span>`;
+      if (btn) btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Resume Feed</span>`;
       if (indicator) indicator.classList.add("opacity-40");
-      this.showToast("⏸️ Fleet feed paused", "info");
+      this.showToast("⏸️ Feed paused", "info");
     }
 
     if (window.lucide) window.lucide.createIcons();
     this.saveState();
   }
 
-  // Model Switcher
   applyBinModel(modelClass) {
     this.state.activeModel = modelClass;
     const compBin = document.getElementById("compostable-dustbin");
@@ -1004,7 +1082,6 @@ class SmartBinApp {
       maxZoom: 18,
     }).addTo(this.map);
 
-    // 1. Central Bio-Compost Hub Marker
     const hubIcon = L.divIcon({
       className: 'custom-map-icon',
       html: `
@@ -1023,7 +1100,6 @@ class SmartBinApp {
       </div>
     `);
 
-    // 2. Collection Truck Marker
     this.truckMarker = L.marker(CENTRAL_HUB.coords, {
       icon: L.divIcon({
         className: 'truck-map-icon',
@@ -1037,7 +1113,6 @@ class SmartBinApp {
       })
     }).addTo(this.map);
 
-    // 3. Add all Station Markers
     Object.values(this.state.stations).forEach(station => {
       this.createOrUpdateStationMarker(station);
     });
@@ -1332,6 +1407,17 @@ class SmartBinApp {
   }
 
   setupEventListeners() {
+    // Role switcher buttons
+    const roleCitizenBtn = document.getElementById("role-btn-citizen");
+    const roleAdminBtn = document.getElementById("role-btn-admin");
+
+    if (roleCitizenBtn) {
+      roleCitizenBtn.addEventListener("click", () => this.applyRole("citizen"));
+    }
+    if (roleAdminBtn) {
+      roleAdminBtn.addEventListener("click", () => this.applyRole("admin"));
+    }
+
     // Model select buttons
     document.querySelectorAll(".model-select-btn").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -1381,7 +1467,7 @@ class SmartBinApp {
       });
     });
 
-    // Empty bin buttons
+    // Empty bin buttons (Admin only)
     document.querySelectorAll("[data-empty-bin]").forEach(btn => {
       btn.addEventListener("click", () => {
         const bin = btn.dataset.emptyBin;
@@ -1411,10 +1497,37 @@ class SmartBinApp {
       });
     }
 
-    // Optimize Route Button
+    // Optimize Route Button (Admin)
     const optimizeBtn = document.getElementById("optimize-route-btn");
     if (optimizeBtn) {
       optimizeBtn.addEventListener("click", () => this.optimizeAndDispatchRoute());
+    }
+
+    // CSV Export Button (Admin)
+    const exportCsvBtn = document.getElementById("export-csv-btn");
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener("click", () => this.exportTelemetryCSV());
+    }
+
+    // Citizen Report Issue Modal Controls
+    const openReportModalBtn = document.getElementById("open-report-modal");
+    const closeReportModalBtn = document.getElementById("close-report-modal");
+    const reportModal = document.getElementById("citizen-report-modal");
+    const reportForm = document.getElementById("citizen-report-form");
+
+    if (openReportModalBtn && reportModal) {
+      openReportModalBtn.addEventListener("click", () => reportModal.classList.remove("hidden"));
+    }
+    if (closeReportModalBtn && reportModal) {
+      closeReportModalBtn.addEventListener("click", () => reportModal.classList.add("hidden"));
+    }
+    if (reportForm) {
+      reportForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const type = document.getElementById("report-issue-type")?.value || "Overflow";
+        const note = document.getElementById("report-issue-note")?.value || "Dustbin full";
+        this.submitCitizenReport(type, note);
+      });
     }
 
     // Classifier search input
@@ -1434,7 +1547,7 @@ class SmartBinApp {
       });
     });
 
-    // Sliders
+    // Sliders (Admin only)
     const compSlider = document.getElementById("slider-compostable");
     if (compSlider) {
       compSlider.value = this.getCurrentStation().compostable.fillLevel;

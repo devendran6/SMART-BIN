@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoPulse SmartBin OS | Multi-Location Fleet & Route Optimization</title>
+  <title>EcoPulse SmartBin OS | Citizen & Municipal Admin Portals</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -45,20 +45,20 @@
     }
   </script>
 </head>
-<body class="bg-[#080d1a] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-white">
+<body class="mode-citizen bg-[#080d1a] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-white">
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Navigation Bar -->
-  <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-900/85 border-b border-slate-800">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-900/90 border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3">
       
-      <!-- Brand & Hub Status -->
+      <!-- Brand & Portal Tag -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-500 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
           <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-            <i data-lucide="network" class="w-5 h-5 text-emerald-400"></i>
+            <i data-lucide="recycle" class="w-5 h-5 text-emerald-400"></i>
           </div>
         </div>
         <div>
@@ -66,35 +66,56 @@
             <h1 class="text-base font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-400 bg-clip-text text-transparent">
               EcoPulse SmartBin OS
             </h1>
-            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
-              Multi-Location Fleet
+            <span id="portal-badge-tag" class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+              CITIZEN ECO-PORTAL
             </span>
           </div>
           <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            5 Municipal Stations Online &bull; GPS Fleet Sync &bull; LoRaWAN Telemetry
+            5 Municipal Stations Online &bull; Real-Time Telemetry Sync
           </p>
         </div>
       </div>
 
-      <!-- Action Utilities -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Live IoT Stream Toggle -->
-        <button id="toggle-iot-btn" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-xs font-medium text-slate-200 flex items-center gap-1.5 transition-all shadow-sm">
-          <span id="iot-live-indicator" class="badge-live-dot"></span>
-          <span>Live Fleet Feed</span>
-        </button>
+      <!-- Center / Right Actions: ROLE SEGMENTED SWITCHER -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Role Segmented Switch (Citizen vs Admin) -->
+        <div class="role-segmented-switch">
+          <button id="role-btn-citizen" class="role-switch-btn active-citizen" title="Switch to Public Citizen Portal">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span>Citizen User</span>
+          </button>
+          <button id="role-btn-admin" class="role-switch-btn" title="Switch to Municipal Admin & Fleet Operations">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+            <span>Municipal Admin</span>
+          </button>
+        </div>
 
-        <!-- Sound Effects Toggle -->
-        <button id="toggle-sound-btn" title="Toggle Sound Effects" class="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 transition-all">
+        <!-- Citizen-Specific Quick Widget (Eco Points) -->
+        <div class="citizen-only hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-700/60 text-xs">
+          <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+          <span class="text-slate-300">My Rewards:</span>
+          <strong id="citizen-points-counter" class="text-emerald-300 font-mono font-bold">140 Pts</strong>
+        </div>
+
+        <!-- Admin-Specific Action Utilities -->
+        <div class="admin-only hidden sm:flex items-center gap-2">
+          <button id="export-csv-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-xs font-medium text-slate-300 flex items-center gap-1.5 transition-all">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span>Export CSV</span>
+          </button>
+          <button id="toggle-iot-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-xs font-medium text-slate-300 flex items-center gap-1.5 transition-all">
+            <span id="iot-live-indicator" class="badge-live-dot"></span>
+            <span>Live Feed</span>
+          </button>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="toggle-sound-btn" title="Toggle Sound" class="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 transition-all">
           <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400"></i>
         </button>
 
-        <!-- Hardware & API Specs Modal Button -->
-        <button id="open-hardware-modal" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all">
-          <i data-lucide="cpu" class="w-4 h-4"></i>
-          <span>Hardware & LoRa</span>
-        </button>
       </div>
 
     </div>
@@ -126,7 +147,7 @@
       </div>
       <button onclick="window.app.optimizeAndDispatchRoute()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-lg shadow-rose-900/40 transition-all flex items-center gap-1.5 whitespace-nowrap">
         <i data-lucide="navigation" class="w-4 h-4"></i>
-        Optimize & Dispatch Route
+        Optimize &amp; Dispatch Route
       </button>
     </div>
   </div>
@@ -134,30 +155,64 @@
   <!-- Main Workspace -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     
-    <!-- Top Highlights Banner -->
-    <div class="glass-panel p-6 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-emerald-950/20 relative overflow-hidden">
+    <!-- =========================================================================
+         CITIZEN HERO PORTAL BANNER (Visible in Citizen Mode only)
+         ========================================================================= -->
+    <div class="citizen-only glass-panel p-6 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-emerald-950/30 relative overflow-hidden">
       <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
         <div class="space-y-2 max-w-2xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Multi-Location Waste Intelligence
+            <i data-lucide="smile" class="w-3.5 h-3.5"></i> Citizen Eco-Hub &bull; Responsible Waste Segregation
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            City-Wide Smart Dustbin Fleet Network
+            Find Your Nearest Smart Bin &amp; Earn Eco-Points
           </h2>
           <p class="text-slate-300 text-sm leading-relaxed">
-            Real-time ultrasonic monitoring across <strong class="text-emerald-400">multiple city locations</strong>. Automated TSP route optimization dispatches collection trucks only to full bins, cutting fuel consumption and eliminating street overflow.
+            Check real-time dustbin fill availability before walking over. Deposit your 
+            <strong class="text-emerald-400">Compostable</strong> (Wet Organic) and 
+            <strong class="text-amber-400">Decomposable</strong> (Dry Fibers) cleanly to earn community rewards.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <button id="optimize-route-btn" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-900/30 flex items-center gap-2 transition-all">
-            <i data-lucide="navigation" class="w-4 h-4"></i>
-            Optimize Collection Route
-          </button>
-          <a href="#fleet-section" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
-            <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-400"></i>
-            View All 5 Stations
+          <a href="#sorter-section" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-900/30 flex items-center gap-2 transition-all">
+            <i data-lucide="scan" class="w-4 h-4"></i>
+            Can I Compost This? (AI Sorter)
           </a>
+          <button id="open-report-modal" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
+            <i data-lucide="flag" class="w-4 h-4 text-amber-400"></i>
+            Report Bin Issue / Full
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         ADMIN HERO COMMAND BANNER (Visible in Admin Mode only)
+         ========================================================================= -->
+    <div class="admin-only glass-panel p-6 rounded-3xl border border-blue-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-blue-950/30 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+        <div class="space-y-2 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-semibold">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i> Municipal Operations &bull; Central Command Center
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            City Fleet Telemetry &amp; Route Logistics
+          </h2>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Monitor real-time ultrasonic sensor depths, temperature, and battery health across all 5 municipal stations. Run AI Travelling Salesperson route optimization to dispatch trucks dynamically.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="window.app.optimizeAndDispatchRoute()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-900/30 flex items-center gap-2 transition-all">
+            <i data-lucide="navigation" class="w-4 h-4"></i>
+            Run TSP Route Optimization
+          </button>
+          <button onclick="window.app.exportTelemetryCSV()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
+            <i data-lucide="download" class="w-4 h-4 text-sky-400"></i>
+            Download Fleet Audit CSV
+          </button>
         </div>
       </div>
     </div>
@@ -166,10 +221,13 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
       <div>
         <div class="flex items-center gap-2">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">ACTIVE STATION</span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SELECTED LOCATION</span>
           <h3 id="active-station-name" class="text-base sm:text-lg font-black text-white">BIN-104: Green Civic Hub</h3>
         </div>
-        <p id="active-station-zone" class="text-xs text-slate-400 mt-0.5">Sector 4 &bull; Eco Park</p>
+        <div class="flex items-center gap-2 mt-0.5">
+          <p id="active-station-zone" class="text-xs text-slate-400">Sector 4 &bull; Eco Park</p>
+          <span class="citizen-only text-xs text-emerald-400 font-mono font-semibold" id="citizen-nearest-distance">&bull; 120m away</span>
+        </div>
       </div>
 
       <div class="flex items-center gap-3">
@@ -193,7 +251,7 @@
       </div>
     </div>
 
-    <!-- MAIN DUAL DUSTBIN VIEW FOR ACTIVE STATION -->
+    <!-- MAIN DUAL DUSTBIN VIEW -->
     <section>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
@@ -379,10 +437,10 @@
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <button data-deposit-bin="compostable" data-deposit-amount="5" data-deposit-label="Banana Peel" data-deposit-icon="🍌" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🍌 +5% Banana Peel
+                  🍌 +5% Peel
                 </button>
                 <button data-deposit-bin="compostable" data-deposit-amount="10" data-deposit-label="Food Leftovers" data-deposit-icon="🥗" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🥗 +10% Food Scraps
+                  🥗 +10% Scraps
                 </button>
                 <button data-deposit-bin="compostable" data-deposit-amount="18" data-deposit-label="Garden Leaves" data-deposit-icon="🍂" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
                   🍂 +18% Leaves
@@ -390,15 +448,17 @@
               </div>
             </div>
 
-            <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-              <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Calibrate Fill:</span>
-              <input type="range" id="slider-compostable" min="0" max="100" class="w-full accent-emerald-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+            <!-- Admin-Only Slider & Reset -->
+            <div class="admin-only space-y-2 pt-2 border-t border-slate-800/60">
+              <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Admin Calibrate:</span>
+                <input type="range" id="slider-compostable" min="0" max="100" class="w-full accent-emerald-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+              </div>
+              <button data-empty-bin="compostable" class="w-full py-2 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                Admin: Empty Compostable Dustbin
+              </button>
             </div>
-
-            <button data-empty-bin="compostable" class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
-              <i data-lucide="trash-2" class="w-4 h-4 text-emerald-400"></i>
-              Clear & Empty Compostable Dustbin
-            </button>
           </div>
 
         </div>
@@ -586,26 +646,28 @@
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <button data-deposit-bin="decomposable" data-deposit-amount="6" data-deposit-label="Paper Bag" data-deposit-icon="🛍️" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🛍️ +6% Paper Bag
+                  🛍️ +6% Bag
                 </button>
                 <button data-deposit-bin="decomposable" data-deposit-amount="12" data-deposit-label="Cardboard Box" data-deposit-icon="📦" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  📦 +12% Cardboard Box
+                  📦 +12% Box
                 </button>
                 <button data-deposit-bin="decomposable" data-deposit-amount="20" data-deposit-label="Pulp Cartons" data-deposit-icon="🥡" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🥡 +20% Wood Pulp
+                  🥡 +20% Pulp
                 </button>
               </div>
             </div>
 
-            <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-              <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Calibrate Fill:</span>
-              <input type="range" id="slider-decomposable" min="0" max="100" class="w-full accent-amber-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+            <!-- Admin-Only Slider & Reset -->
+            <div class="admin-only space-y-2 pt-2 border-t border-slate-800/60">
+              <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] font-mono text-slate-400 whitespace-nowrap">Admin Calibrate:</span>
+                <input type="range" id="slider-decomposable" min="0" max="100" class="w-full accent-amber-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+              </div>
+              <button data-empty-bin="decomposable" class="w-full py-2 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-amber-400"></i>
+                Admin: Empty Decomposable Dustbin
+              </button>
             </div>
-
-            <button data-empty-bin="decomposable" class="w-full py-2.5 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2">
-              <i data-lucide="trash-2" class="w-4 h-4 text-amber-400"></i>
-              Clear & Empty Decomposable Dustbin
-            </button>
           </div>
 
         </div>
@@ -613,18 +675,19 @@
       </div>
     </section>
 
-
-    <!-- CITY-WIDE FLEET OVERVIEW GRID -->
-    <section id="fleet-section" class="space-y-4">
+    <!-- =========================================================================
+         CITY-WIDE FLEET OVERVIEW GRID (ADMIN ONLY)
+         ========================================================================= -->
+    <section id="fleet-section" class="admin-only space-y-4">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-bold text-white flex items-center gap-2">
-            <i data-lucide="layout-grid" class="w-5 h-5 text-emerald-400"></i>
-            All Municipal Stations at a Glance
+            <i data-lucide="layout-grid" class="w-5 h-5 text-blue-400"></i>
+            Municipal Command: All 5 City Stations
           </h3>
-          <p class="text-xs text-slate-400">Click any card to load that station's 3D dustbin telemetry view</p>
+          <p class="text-xs text-slate-400">Click any station to switch active telemetry diagnostics</p>
         </div>
-        <div class="text-xs font-mono text-slate-400">5 Monitored Stations</div>
+        <div class="text-xs font-mono text-slate-400">5 Live IoT Transceivers</div>
       </div>
 
       <div id="fleet-overview-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
@@ -632,9 +695,10 @@
       </div>
     </section>
 
-
-    <!-- DYNAMIC ROUTE OPTIMIZATION & LEAFLET FLEET MAP -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- =========================================================================
+         DYNAMIC ROUTE OPTIMIZATION & LEAFLET FLEET MAP (ADMIN ONLY)
+         ========================================================================= -->
+    <section class="admin-only grid grid-cols-1 lg:grid-cols-3 gap-8">
       
       <!-- Interactive Map (2 Columns) -->
       <div class="lg:col-span-2 glass-panel-elevated rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
@@ -643,13 +707,13 @@
             <div>
               <h3 class="text-lg font-bold text-white flex items-center gap-2">
                 <i data-lucide="map" class="w-5 h-5 text-sky-400"></i>
-                City-Wide Fleet Map & TSP Route Optimizer
+                Fleet Logistics Map &amp; TSP Route Optimizer
               </h3>
-              <p class="text-xs text-slate-400">Green = Normal &bull; Yellow = Moderate &bull; Red = Urgent Pickup Needed</p>
+              <p class="text-xs text-slate-400">Green = Normal &bull; Yellow = Moderate &bull; Red = Critical Overflow</p>
             </div>
-            <button onclick="window.app.optimizeAndDispatchRoute()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-900/40">
+            <button onclick="window.app.optimizeAndDispatchRoute()" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-900/40">
               <i data-lucide="play" class="w-3.5 h-3.5"></i>
-              Run Route
+              Run TSP Route
             </button>
           </div>
 
@@ -663,7 +727,7 @@
             </div>
             <div>
               <div class="text-[11px] text-slate-400 font-medium">Bio-Compost Hub</div>
-              <div class="text-xs font-bold text-slate-200">Central Depot & Plant</div>
+              <div class="text-xs font-bold text-slate-200">Central Depot &amp; Plant</div>
             </div>
           </div>
 
@@ -700,26 +764,25 @@
             <span class="text-[10px] font-mono text-slate-400">Waypoint Manifest</span>
           </div>
 
-          <!-- Dynamic Driver Manifest -->
           <div id="driver-route-manifest" class="mb-4">
             <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-slate-400 text-xs">
               <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-sky-400"></i>
-              Click <strong>"Optimize Collection Route"</strong> to generate the shortest fuel-saving path connecting full bins!
+              Click <strong>"Run TSP Route"</strong> to generate shortest fuel-saving path connecting full bins!
             </div>
           </div>
 
           <!-- Audit Trail -->
           <div class="border-t border-slate-800 pt-3">
             <div class="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
-              <span>Fleet Audit Trail</span>
-              <span class="text-[10px] text-slate-500 font-mono">Live</span>
+              <span>Admin Telemetry Audit Trail</span>
+              <button onclick="window.app.exportTelemetryCSV()" class="text-[10px] text-sky-400 hover:underline">Export CSV</button>
             </div>
             <div id="activity-logs-container" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
           </div>
         </div>
 
         <div class="pt-3 border-t border-slate-800 text-center">
-          <button onclick="localStorage.removeItem('ecopulse_smartbin_fleet_state'); location.reload();" class="text-slate-500 hover:text-slate-300 underline text-[11px]">
+          <button onclick="localStorage.removeItem('ecopulse_smartbin_role_state'); location.reload();" class="text-slate-500 hover:text-slate-300 underline text-[11px]">
             Reset Fleet Telemetry
           </button>
         </div>
@@ -727,8 +790,9 @@
 
     </section>
 
-
-    <!-- SMART WASTE CLASSIFIER / SEARCH SECTION -->
+    <!-- =========================================================================
+         SMART WASTE CLASSIFIER / SEARCH SECTION (CITIZEN & ADMIN)
+         ========================================================================= -->
     <section id="sorter-section" class="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-800 relative">
       <div class="max-w-3xl mx-auto space-y-6">
         
@@ -778,7 +842,7 @@
                   COMPOSTABLE
                 </span>
               </div>
-              <p class="text-slate-400 text-xs">Decomposes in <strong>2 to 4 Weeks</strong>. High moisture & nitrogen content converts into rich agricultural compost.</p>
+              <p class="text-slate-400 text-xs">Decomposes in <strong>2 to 4 Weeks</strong>. High moisture &amp; nitrogen content converts into rich agricultural compost.</p>
             </div>
             <button onclick="window.app.depositWaste('compostable', 5, 'Banana Peel', '🍌')" class="mt-3 w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow">
               <span>🍌</span> Drop in Compostable Dustbin (+5%)
@@ -861,7 +925,7 @@
             <div>
               <h3 class="text-base font-bold text-white flex items-center gap-2">
                 <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
-                7-Day Waste Accumulation & Fill Velocity
+                7-Day Waste Accumulation &amp; Fill Velocity
               </h3>
               <p class="text-xs text-slate-400">Daily average fill across municipal fleet</p>
             </div>
@@ -895,17 +959,52 @@
 
   </main>
 
+  <!-- CITIZEN ISSUE REPORT MODAL -->
+  <div id="citizen-report-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-panel-elevated max-w-md w-full rounded-3xl border border-slate-700 p-6">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h4 class="font-bold text-white text-base flex items-center gap-2">
+          <i data-lucide="flag" class="w-4 h-4 text-amber-400"></i> Report Dustbin Issue
+        </h4>
+        <button id="close-report-modal" class="p-1 rounded-lg text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="citizen-report-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Issue Category:</label>
+          <select id="report-issue-type" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200">
+            <option value="Bin Full / Overflow Risk">🚨 Bin Full / Overflow Risk</option>
+            <option value="Foul Odor / Pest Influx">🤢 Strong Odor / Pests</option>
+            <option value="Damaged Lid / Sensor Stuck">🛠️ Damaged Lid / Won't Open</option>
+            <option value="Vandalism / Trash Scattered">⚠️ Trash Scattered Around Bin</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Optional Details:</label>
+          <textarea id="report-issue-note" rows="3" placeholder="Describe the issue at this station..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Report to Municipal Team
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="mt-16 border-t border-slate-800/80 bg-slate-950/60 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <span class="font-extrabold text-slate-300">EcoPulse SmartBin OS</span>
-        <span>&bull; Real-life Multi-Location Smart Waste Management Network</span>
+        <span>&bull; Citizen &amp; Municipal Admin Portals</span>
       </div>
       <div class="flex items-center gap-4 text-slate-400">
-        <span>LoRaWAN / NB-IoT Enabled</span>
+        <span>Citizen Eco-Rewards</span>
         <span>&bull;</span>
-        <span>Traveling Salesperson Route Optimization</span>
+        <span>Admin Route Optimization</span>
         <span>&bull;</span>
         <button onclick="document.getElementById('hardware-modal').classList.remove('hidden')" class="hover:text-emerald-400 underline">
           View Hardware Specs
@@ -923,7 +1022,7 @@
             <i data-lucide="radio-tower" class="w-6 h-6"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white">Multi-Location IoT & LoRaWAN Architecture</h3>
+            <h3 class="text-xl font-bold text-white">Multi-Location IoT &amp; LoRaWAN Architecture</h3>
             <p class="text-xs text-slate-400">How multiple outdoor dustbins transmit data across city-wide distances</p>
           </div>
         </div>
@@ -957,7 +1056,7 @@
         <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
           <h4 class="font-bold text-white text-xs uppercase tracking-wider text-amber-400">3. Dynamic Route Optimization Algorithm (TSP)</h4>
           <p class="text-xs leading-relaxed text-slate-300">
-            Instead of sending trucks to every bin, the server filters for bins with <code class="text-rose-300 font-mono">fill &ge; 75%</code>, calculates the <strong>Traveling Salesperson Problem (TSP)</strong> shortest path from the central Bio-Plant depot, and dispatches the optimal GPS turn-by-turn route to the driver's tablet.
+            The municipal server filters for bins with <code class="text-rose-300 font-mono">fill &ge; 75%</code>, calculates the <strong>Traveling Salesperson Problem (TSP)</strong> shortest path from the central Bio-Plant depot, and dispatches the optimal GPS turn-by-turn route to the driver's tablet.
           </p>
         </div>
       </div>

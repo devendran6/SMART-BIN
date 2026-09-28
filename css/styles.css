@@ -1,4 +1,4 @@
-/* EcoPulse SmartBin OS - Custom Styles & Multi-Location Fleet Styles */
+/* EcoPulse SmartBin OS - Custom Styles, Multi-Location & Role-Based UI */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
@@ -34,6 +34,53 @@ body {
   box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
 }
 
+/* Role Segmented Switcher */
+.role-segmented-switch {
+  display: flex;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 3px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.role-switch-btn {
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.role-switch-btn:hover {
+  color: #fff;
+}
+
+.role-switch-btn.active-citizen {
+  background: #10b981;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+}
+
+.role-switch-btn.active-admin {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+}
+
+/* Role-conditional visibility */
+body.mode-citizen .admin-only {
+  display: none !important;
+}
+
+body.mode-admin .citizen-only {
+  display: none !important;
+}
+
 /* ==========================================================================
    REALISTIC PHYSICAL DUSTBIN 3D UI COMPONENT
    ========================================================================== */
@@ -47,7 +94,6 @@ body {
   padding: 20px 10px 10px 10px;
 }
 
-/* Dustbin Outer Chassis */
 .dustbin-container {
   position: relative;
   width: 100%;
@@ -58,7 +104,6 @@ body {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Top Sensor Arch / Lid Assembly */
 .dustbin-lid-assembly {
   position: relative;
   width: 92%;
@@ -68,7 +113,6 @@ body {
   align-items: center;
 }
 
-/* Hood Handle & IR Motion Detector */
 .dustbin-handle-bar {
   width: 90px;
   height: 10px;
@@ -81,7 +125,6 @@ body {
   align-items: center;
 }
 
-/* Physical Motorized Lid Flap */
 .dustbin-lid {
   position: relative;
   width: 100%;
@@ -99,25 +142,21 @@ body {
   cursor: pointer;
 }
 
-/* Lid Open State (Animated) */
 .dustbin-lid.lid-open {
   transform: rotateX(-75deg) translateY(-14px) scale(0.96);
   box-shadow: 0 25px 35px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.4);
 }
 
-/* Bin Lid Theme: Compostable */
 .dustbin-compostable .dustbin-lid {
   background: linear-gradient(180deg, #059669 0%, #047857 50%, #064e3b 100%);
   border-color: #34d399;
 }
 
-/* Bin Lid Theme: Decomposable */
 .dustbin-decomposable .dustbin-lid {
   background: linear-gradient(180deg, #d97706 0%, #b45309 50%, #78350f 100%);
   border-color: #fbbf24;
 }
 
-/* Dual Ultrasonic Eyes on Lid */
 .ultrasonic-lid-eyes {
   display: flex;
   align-items: center;
@@ -143,7 +182,6 @@ body {
   50% { box-shadow: 0 0 14px #38bdf8, 0 0 4px #fff; }
 }
 
-/* Lid Status LED Indicator */
 .lid-led-status {
   display: flex;
   align-items: center;
@@ -174,7 +212,6 @@ body {
   to { opacity: 1; }
 }
 
-/* Glowing Rim Ring Under Lid */
 .dustbin-neck-collar {
   width: 96%;
   height: 12px;
@@ -205,7 +242,6 @@ body {
   box-shadow: 0 0 14px #f59e0b;
 }
 
-/* Main Dustbin Body */
 .dustbin-body {
   position: relative;
   width: 88%;
@@ -222,7 +258,6 @@ body {
   transition: all 0.4s ease;
 }
 
-/* Subtle Ribbed Lines on Trash Can Body */
 .dustbin-ribbed-texture {
   position: absolute;
   inset: 0;
@@ -237,7 +272,6 @@ body {
   z-index: 22;
 }
 
-/* Embedded Front OLED Screen on Bin */
 .dustbin-embedded-screen {
   margin-top: 14px;
   width: 84%;
@@ -252,7 +286,6 @@ body {
   z-index: 26;
 }
 
-/* See-through Cutaway Fill Window inside Bin */
 .dustbin-cutaway-window {
   position: relative;
   width: 84%;
@@ -266,7 +299,6 @@ body {
   z-index: 25;
 }
 
-/* Depth Measurement Scale Marks */
 .cutaway-ruler {
   position: absolute;
   top: 10px;
@@ -295,7 +327,6 @@ body {
   background: rgba(148, 163, 184, 0.4);
 }
 
-/* Ultrasonic Wave Guide in Cutaway */
 .ultrasonic-beam-guide {
   position: absolute;
   top: 0;
@@ -335,7 +366,6 @@ body {
   100% { opacity: 0; transform: translateY(22px) scale(1.3); }
 }
 
-/* Fluid / Accumulated Waste Level */
 .dustbin-waste-fill {
   position: absolute;
   bottom: 0;
@@ -348,19 +378,16 @@ body {
   justify-content: flex-start;
 }
 
-/* Compostable Waste Pile Visuals */
 .waste-fill-compostable {
   background: linear-gradient(180deg, #10b981 0%, #059669 30%, #047857 70%, #064e3b 100%);
   box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
 }
 
-/* Decomposable Waste Pile Visuals */
 .waste-fill-decomposable {
   background: linear-gradient(180deg, #f59e0b 0%, #d97706 30%, #b45309 70%, #78350f 100%);
   box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
 }
 
-/* Top Wave of Waste */
 .waste-wave-top {
   position: absolute;
   top: -16px;
@@ -377,7 +404,6 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-/* Floating Waste Item Badges Inside Bin */
 .stacked-waste-icons {
   position: absolute;
   inset: 0;
@@ -399,7 +425,6 @@ body {
   50% { transform: translateY(-8px) rotate(4deg); }
 }
 
-/* Physical Dustbin Base & Foot Pedal */
 .dustbin-base-assembly {
   position: relative;
   width: 94%;
@@ -410,7 +435,6 @@ body {
   z-index: 25;
 }
 
-/* Bottom Foot Pedal */
 .dustbin-foot-pedal {
   margin: 0 auto;
   width: 72px;
@@ -440,7 +464,6 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* Realistic Wheels */
 .dustbin-wheel {
   width: 32px;
   height: 32px;
@@ -461,7 +484,6 @@ body {
   background: #cbd5e1;
 }
 
-/* Side Grip Handles on Bin */
 .dustbin-side-handle {
   position: absolute;
   top: 110px;
@@ -481,7 +503,6 @@ body {
   right: -9px;
 }
 
-/* Dropping Trash Animation */
 .dropping-trash-item {
   position: absolute;
   z-index: 50;
@@ -491,25 +512,12 @@ body {
 }
 
 @keyframes dropIntoBin {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1.3) rotate(0deg);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(140px) scale(0.9) rotate(180deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(220px) scale(0.3) rotate(360deg);
-  }
+  0% { opacity: 1; transform: translateY(0) scale(1.3) rotate(0deg); }
+  60% { opacity: 1; transform: translateY(140px) scale(0.9) rotate(180deg); }
+  100% { opacity: 0; transform: translateY(220px) scale(0.3) rotate(360deg); }
 }
 
-/* ==========================================================================
-   MULTI-LOCATION FLEET NETWORK & ROUTE STYLES
-   ========================================================================== */
-
-/* Station Selector Pills */
+/* Multi-Location Station & Fleet Styles */
 .station-pill {
   padding: 8px 14px;
   border-radius: 14px;
@@ -550,7 +558,6 @@ body {
   box-shadow: 0 0 18px rgba(239, 68, 68, 0.4);
 }
 
-/* Fleet Overview Card */
 .fleet-card {
   padding: 16px;
   border-radius: 18px;
@@ -571,7 +578,6 @@ body {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
 }
 
-/* Pulsating Map Markers */
 .pulse-marker-critical {
   width: 38px;
   height: 38px;
@@ -614,7 +620,6 @@ body {
   box-shadow: 0 0 12px #10b981;
 }
 
-/* Route Waypoint Badge */
 .waypoint-badge {
   display: inline-flex;
   align-items: center;
@@ -629,7 +634,7 @@ body {
   font-weight: 700;
 }
 
-/* Model Styles */
+/* Models */
 .model-smart-kiosk .dustbin-body {
   border-radius: 12px 12px 28px 28px;
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #050b14 100%);
