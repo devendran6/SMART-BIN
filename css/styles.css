@@ -672,3 +672,21 @@ body.mode-admin .citizen-only {
 ::-webkit-scrollbar-track { background: #080d1a; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Dedicated Leaflet Map Container Heights */
+#smartbin-map {
+  width: 100% !important;
+  height: 480px !important;
+  min-height: 480px !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background-color: #0b1329 !important;
+  border-radius: 1rem;
+}
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: #0b1329 !important;
+  border-radius: 1rem;
+}

@@ -700,51 +700,71 @@ class MunicipalAdminApp {
 
   initMap() {
     const mapEl = document.getElementById("smartbin-map");
-    if (!mapEl || !window.L) return;
+    if (!mapEl) return;
 
-    this.map = L.map("smartbin-map", {
-      zoomControl: false,
-      attributionControl: false
-    }).setView(CENTRAL_HUB.coords, 13);
+    if (this.map) {
+      setTimeout(() => this.map.invalidateSize(), 150);
+      return;
+    }
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-    }).addTo(this.map);
+    if (!window.L) {
+      console.warn("Leaflet library loading, retrying in 250ms...");
+      setTimeout(() => this.initMap(), 250);
+      return;
+    }
 
-    const hubIcon = L.divIcon({
-      className: 'custom-map-icon',
-      html: `
-        <div style="background: #3b82f6; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 18px #3b82f6; border: 2.5px solid white;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-        </div>
-      `,
-      iconSize: [36, 36],
-      iconAnchor: [18, 18]
-    });
+    try {
+      this.map = L.map("smartbin-map", {
+        zoomControl: true,
+        attributionControl: false
+      }).setView(CENTRAL_HUB.coords, 13);
 
-    L.marker(CENTRAL_HUB.coords, { icon: hubIcon }).addTo(this.map).bindPopup(`
-      <div style="font-family: var(--font-main); padding: 4px;">
-        <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #38bdf8;">Municipal Bio-Compost Facility</h4>
-        <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Central processing plant & fleet depot</p>
-      </div>
-    `);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+      }).addTo(this.map);
 
-    this.truckMarker = L.marker(CENTRAL_HUB.coords, {
-      icon: L.divIcon({
-        className: 'truck-map-icon',
+      const hubIcon = L.divIcon({
+        className: 'custom-map-icon',
         html: `
-          <div style="background: #f59e0b; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f59e0b; border: 2.5px solid white;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+          <div style="background: #3b82f6; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 18px #3b82f6; border: 2.5px solid white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
           </div>
         `,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
-      })
-    }).addTo(this.map);
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      });
 
-    Object.values(this.state.stations).forEach(station => {
-      this.createOrUpdateStationMarker(station);
-    });
+      L.marker(CENTRAL_HUB.coords, { icon: hubIcon }).addTo(this.map).bindPopup(`
+        <div style="font-family: var(--font-main); padding: 4px;">
+          <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #38bdf8;">Municipal Bio-Compost Facility</h4>
+          <p style="font-size: 11px; margin: 0; color: #cbd5e1;">Central processing plant & fleet depot</p>
+        </div>
+      `);
+
+      this.truckMarker = L.marker(CENTRAL_HUB.coords, {
+        icon: L.divIcon({
+          className: 'truck-map-icon',
+          html: `
+            <div style="background: #f59e0b; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f59e0b; border: 2.5px solid white;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+            </div>
+          `,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        })
+      }).addTo(this.map);
+
+      Object.values(this.state.stations).forEach(station => {
+        this.createOrUpdateStationMarker(station);
+      });
+
+      setTimeout(() => {
+        if (this.map) this.map.invalidateSize();
+      }, 250);
+    } catch (err) {
+      console.error("Map initialization error:", err);
+      setTimeout(() => this.initMap(), 500);
+    }
   }
 
   createOrUpdateStationMarker(station) {
