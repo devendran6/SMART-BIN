@@ -65,14 +65,12 @@ A complete Arduino/ESP32 sketch is provided under [`hardware/esp32_smartbin.ino`
 - **WiFiClient** & **HTTPClient** to transmit telemetry every 5 seconds to `POST /api/bins/update`
 
 ### REST Endpoints
-- `GET /api/bins` - Retrieve real-time telemetry of all monitored bin compartments.
-- `POST /api/bins/update` - Ingest live JSON sensor readings:
-  ```json
-  {
-    "compostable": { "fillPercent": 75, "distanceCm": 25, "weightKg": 18.2 },
-    "decomposable": { "fillPercent": 50, "distanceCm": 50, "weightKg": 11.0 }
-  }
-  ```
+- `GET /api/bins` - Retrieve real-time telemetry of active demo bin.
+- `POST /api/bins/update` - Ingest live JSON sensor readings.
+- `GET /api/stations` - Retrieve all 5 municipal stations and hub location.
+- `POST /api/stations/update` - Update telemetry for a specific station by ID.
+- `GET /api/routes` & `POST /api/routes/optimize` - Calculate optimal Traveling Salesperson pickup route with fuel savings and turn-by-turn waypoints.
+- `GET /api/reports` & `POST /api/reports` - Fetch and log citizen overflow and maintenance reports.
 
 ---
 
@@ -85,10 +83,13 @@ The Municipal Admin panel monitors 5 distinct city locations:
 4. **BIN-104**: Green Civic Hub & Botanical Garden (Eco Park)
 5. **BIN-105**: City General Hospital & Medical Zone (Health Quarter)
 
-### Dynamic Dispatch Engine
-- Evaluates bins exceeding the critical collection threshold (**≥ 75% fill level**).
-- Computes the shortest pickup circuit starting from the **Central Municipal Bio-Composting Plant** using a Euclidean Nearest-Neighbor TSP algorithm.
-- Displays an interactive animated truck route with live turn-by-turn navigation HUD and fuel-saving analytics.
+### Fleet Route Capabilities
+- **Priority TSP Route (≥75% Full)**: Computes the shortest pickup circuit starting from the **Central Municipal Bio-Composting Plant** using a Euclidean Nearest-Neighbor TSP algorithm.
+- **Routine Sweep (All 5 Stations)**: Full-circuit collection route to sanitize all city stations.
+- **Direct Dispatch**: Send collection truck directly to an individual station from its map popup.
+- **Recall Truck / Cancel Route**: Stop active collection and recall the vehicle to the depot.
+- **Citizen Walking Route**: Public users can click "Route to Selected Bin" to get instant pedestrian directions, walking time (~2 mins), and distance in meters.
+- **Live Driver Navigation HUD**: Turn-by-turn waypoint manifest, fuel saved (~0.42L/km), and automated bin emptying upon arrival.
 
 ---
 

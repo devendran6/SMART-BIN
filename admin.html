@@ -338,10 +338,24 @@
               </h3>
               <p class="text-xs text-slate-400">Green = Normal &bull; Yellow = Moderate &bull; Red = Critical Overflow</p>
             </div>
-            <button onclick="window.adminApp.optimizeAndDispatchRoute()" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-900/40">
-              <i data-lucide="play" class="w-3.5 h-3.5"></i>
-              Run TSP Route
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="window.adminApp.optimizeAndDispatchRoute('auto')" title="Auto-optimize route for stations needing collection" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-sky-900/40">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                Run TSP Route
+              </button>
+              <button onclick="window.adminApp.optimizeAndDispatchRoute('all')" title="Route complete 5-station city circuit" class="px-3 py-1.5 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center gap-1.5 transition-all">
+                <i data-lucide="route" class="w-3.5 h-3.5"></i>
+                All 5 Stations
+              </button>
+              <button onclick="window.adminApp.cancelPickupRoute()" title="Cancel route and recall truck to depot" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-950/80 text-slate-300 hover:text-rose-300 border border-slate-700 hover:border-rose-700 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                <i data-lucide="square" class="w-3.5 h-3.5 text-rose-400"></i>
+                Recall Truck
+              </button>
+              <button onclick="window.adminApp.simulateCriticalFillLevels()" title="Simulate critical fill levels to test routing" class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                Simulate 80%+
+              </button>
+            </div>
           </div>
 
           <div id="smartbin-map" class="w-full h-88 rounded-2xl overflow-hidden border border-slate-700/80 shadow-inner mb-4"></div>

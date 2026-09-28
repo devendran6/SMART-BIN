@@ -177,6 +177,8 @@ class SmartBinApp {
     this.stationMarkers = {};
     this.truckMarker = null;
     this.routePolyline = null;
+    this.citizenRouteLine = null;
+    this.citizenMarker = null;
     this.charts = {};
 
     this.init();
@@ -1143,13 +1145,100 @@ class SmartBinApp {
         <div style="font-family: var(--font-main); padding: 4px;">
           <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #10b981;">${station.id}: ${station.name}</h4>
           <p style="font-size: 11px; margin: 0 0 6px 0; color: #cbd5e1;">Compostable: <strong>${station.compostable.fillLevel}%</strong> | Decomposable: <strong>${station.decomposable.fillLevel}%</strong></p>
-          <button onclick="window.app.switchStation('${station.id}')" style="background: #10b981; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
-            Open Dustbin View
-          </button>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <button onclick="window.app.switchStation('${station.id}')" style="background: #10b981; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+              Select Bin
+            </button>
+            <button onclick="window.app.showCitizenRouteToStation('${station.id}')" style="background: #0284c7; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+              🚶 Walking Route
+            </button>
+          </div>
         </div>
       `);
       this.stationMarkers[station.id] = marker;
     }
+  }
+
+  // Citizen Walking Route Calculation to Nearest or Selected Dustbin
+  showCitizenRouteToStation(targetStationId = null) {
+    const stationId = targetStationId || this.state.currentStationId || "BIN-104";
+    const station = this.state.stations[stationId];
+    if (!station || !this.map) return;
+
+    // Simulated Citizen GPS Location (Pedestrian zone / City center)
+    const citizenOrigin = [12.9750, 77.5990];
+
+    const distKm = this.getHaversineDistance(citizenOrigin, station.coords);
+    const distMeters = Math.round(distKm * 1000);
+    const walkMinutes = Math.max(1, Math.round(distMeters / 80));
+
+    // Intermediate realistic waypoint
+    const midPoint = [
+      (citizenOrigin[0] + station.coords[0]) / 2 + 0.0012,
+      (citizenOrigin[1] + station.coords[1]) / 2 - 0.0008
+    ];
+
+    const routeCoords = [citizenOrigin, midPoint, station.coords];
+
+    if (this.citizenRouteLine) {
+      this.map.removeLayer(this.citizenRouteLine);
+    }
+    if (this.citizenMarker) {
+      this.map.removeLayer(this.citizenMarker);
+    }
+
+    const citizenIcon = L.divIcon({
+      className: 'citizen-user-marker',
+      html: `
+        <div style="background: #10b981; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #10b981; border: 2.5px solid white;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+
+    this.citizenMarker = L.marker(citizenOrigin, { icon: citizenIcon })
+      .addTo(this.map)
+      .bindPopup("<strong>You Are Here</strong><br>Pedestrian GPS Active");
+
+    this.citizenRouteLine = L.polyline(routeCoords, {
+      color: '#10b981',
+      weight: 5,
+      opacity: 0.9,
+      dashArray: '8, 8'
+    }).addTo(this.map);
+
+    this.map.invalidateSize();
+    try {
+      this.map.fitBounds(this.citizenRouteLine.getBounds(), { padding: [50, 50] });
+    } catch (e) {
+      console.warn("Could not fit bounds:", e);
+    }
+
+    const hud = document.getElementById("citizen-route-hud");
+    const titleEl = document.getElementById("citizen-route-title");
+    const detailsEl = document.getElementById("citizen-route-details");
+
+    if (hud) hud.classList.remove("hidden");
+    if (titleEl) titleEl.innerText = `Walking Route to ${station.id}: ${station.name}`;
+    if (detailsEl) detailsEl.innerHTML = `<strong>${distMeters}m</strong> away &bull; <strong>~${walkMinutes} min walk</strong> &bull; Free capacity: Comp ${100 - station.compostable.fillLevel}%, Decomp ${100 - station.decomposable.fillLevel}%`;
+
+    this.showToast(`🧭 Walking Route plotted to ${station.name} (${distMeters}m)`, "success");
+  }
+
+  clearCitizenRoute() {
+    if (this.citizenRouteLine && this.map) {
+      this.map.removeLayer(this.citizenRouteLine);
+      this.citizenRouteLine = null;
+    }
+    if (this.citizenMarker && this.map) {
+      this.map.removeLayer(this.citizenMarker);
+      this.citizenMarker = null;
+    }
+    const hud = document.getElementById("citizen-route-hud");
+    if (hud) hud.classList.add("hidden");
+    this.showToast("Route cleared from map", "info");
   }
 
   updateMapMarker(stationId) {

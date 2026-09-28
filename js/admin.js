@@ -397,19 +397,33 @@ class MunicipalAdminApp {
   }
 
   // TSP Route Optimization
-  optimizeAndDispatchRoute() {
+  optimizeAndDispatchRoute(mode = "auto") {
     if (this.state.pickupRouteActive) {
-      this.showToast("🚚 Collection truck is currently on route!", "warning");
+      this.showToast("🚚 Collection truck is currently on route! Use 'Recall Truck' to cancel.", "warning");
       return;
     }
 
-    const stationsNeedingPickup = Object.values(this.state.stations).filter(s =>
-      s.compostable.fillLevel >= 75 || s.decomposable.fillLevel >= 75
-    );
+    let stationsNeedingPickup = [];
+    if (mode === "all") {
+      stationsNeedingPickup = Object.values(this.state.stations);
+      this.showToast(`🚛 Circuit Generated: Routing all ${stationsNeedingPickup.length} municipal stations`, "info");
+    } else {
+      stationsNeedingPickup = Object.values(this.state.stations).filter(s =>
+        s.compostable.fillLevel >= 75 || s.decomposable.fillLevel >= 75
+      );
 
-    if (stationsNeedingPickup.length === 0) {
-      this.showToast("🟢 All dustbins are currently within safe capacity (<75%). No route needed!", "info");
-      return;
+      if (stationsNeedingPickup.length === 0) {
+        // Fallback: Pick stations with active waste (>20%) or all stations for routine sweep
+        stationsNeedingPickup = Object.values(this.state.stations).filter(s =>
+          s.compostable.fillLevel > 20 || s.decomposable.fillLevel > 20
+        );
+        if (stationsNeedingPickup.length === 0) {
+          stationsNeedingPickup = Object.values(this.state.stations);
+        }
+        this.showToast(`⚡ Routine Sweep: Routing ${stationsNeedingPickup.length} stations with active waste`, "info");
+      } else {
+        this.showToast(`🚨 Priority Route: Visiting ${stationsNeedingPickup.length} full stations (≥75%)`, "warning");
+      }
     }
 
     this.state.pickupRouteActive = true;
@@ -440,21 +454,119 @@ class MunicipalAdminApp {
     this.renderRouteManifest(routeWaypoints);
 
     const latLngs = routeWaypoints.map(w => w.coords);
-    if (this.routePolyline) {
+    if (this.routePolyline && this.map) {
       this.map.removeLayer(this.routePolyline);
     }
 
-    this.routePolyline = L.polyline(latLngs, {
-      color: '#38bdf8',
-      weight: 4,
-      opacity: 0.85,
-      dashArray: '8, 8'
-    }).addTo(this.map);
+    if (this.map) {
+      this.map.invalidateSize();
+      this.routePolyline = L.polyline(latLngs, {
+        color: '#38bdf8',
+        weight: 4,
+        opacity: 0.85,
+        dashArray: '8, 8'
+      }).addTo(this.map);
 
-    this.map.fitBounds(this.routePolyline.getBounds(), { padding: [50, 50] });
+      try {
+        this.map.fitBounds(this.routePolyline.getBounds(), { padding: [50, 50] });
+      } catch (e) {
+        console.warn("Could not fit bounds:", e);
+      }
+    }
 
-    this.showToast(`🚛 Smart Route Generated: Visiting ${stationsNeedingPickup.length} full stations`, "success");
     this.traverseTruckRoute(routeWaypoints);
+  }
+
+  // Direct dispatch to a single target station
+  dispatchDirectToStation(stationId) {
+    if (this.state.pickupRouteActive) {
+      this.showToast("🚚 Collection truck is currently on route! Use 'Recall Truck' to cancel.", "warning");
+      return;
+    }
+    const station = this.state.stations[stationId];
+    if (!station) return;
+
+    this.state.pickupRouteActive = true;
+    const routeWaypoints = [CENTRAL_HUB, station, CENTRAL_HUB];
+    this.renderRouteManifest(routeWaypoints);
+
+    const latLngs = routeWaypoints.map(w => w.coords);
+    if (this.routePolyline && this.map) {
+      this.map.removeLayer(this.routePolyline);
+    }
+
+    if (this.map) {
+      this.map.invalidateSize();
+      this.routePolyline = L.polyline(latLngs, {
+        color: '#f59e0b',
+        weight: 4,
+        opacity: 0.9,
+        dashArray: '6, 6'
+      }).addTo(this.map);
+
+      try {
+        this.map.fitBounds(this.routePolyline.getBounds(), { padding: [50, 50] });
+      } catch (e) {
+        console.warn("Could not fit bounds:", e);
+      }
+    }
+
+    this.showToast(`🚛 Direct Dispatch: Heading to ${station.name} (${station.id})`, "info");
+    this.traverseTruckRoute(routeWaypoints);
+  }
+
+  // Cancel running truck route and recall to depot
+  cancelPickupRoute() {
+    if (this.truckMoveTimer) {
+      clearInterval(this.truckMoveTimer);
+      this.truckMoveTimer = null;
+    }
+    if (this.truckStepTimeout) {
+      clearTimeout(this.truckStepTimeout);
+      this.truckStepTimeout = null;
+    }
+
+    this.state.pickupRouteActive = false;
+
+    if (this.routePolyline && this.map) {
+      this.map.removeLayer(this.routePolyline);
+      this.routePolyline = null;
+    }
+
+    if (this.truckMarker) {
+      this.truckMarker.setLatLng(CENTRAL_HUB.coords);
+    }
+
+    const container = document.getElementById("driver-route-manifest");
+    if (container) {
+      container.innerHTML = `
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-slate-400 text-xs">
+          <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-sky-400"></i>
+          Route canceled. Truck is standing by at Central Bio-Plant Depot. Click <strong>"Run TSP Route"</strong> to dispatch.
+        </div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    this.showToast("🛑 Route canceled. Truck recalled to Central Depot.", "info");
+  }
+
+  // Trigger high fill levels for testing
+  simulateCriticalFillLevels() {
+    if (!this.state.stations["BIN-101"]) return;
+    this.state.stations["BIN-101"].compostable.fillLevel = 92;
+    this.state.stations["BIN-101"].compostable.weightKg = 24.5;
+    this.state.stations["BIN-102"].decomposable.fillLevel = 86;
+    this.state.stations["BIN-102"].decomposable.weightKg = 20.2;
+    this.state.stations["BIN-104"].compostable.fillLevel = 81;
+    this.state.stations["BIN-104"].compostable.weightKg = 19.8;
+    this.saveState();
+    this.renderStationSelector();
+    this.renderFleetGrid();
+    this.renderActiveStationDiagnostics();
+    this.checkThresholdAlerts();
+    Object.values(this.state.stations).forEach(s => this.createOrUpdateStationMarker(s));
+    this.showToast("🚨 Critical overflow triggered on BIN-101, BIN-102 & BIN-104! Test TSP route now.", "warning");
   }
 
   getHaversineDistance(coords1, coords2) {
@@ -472,6 +584,17 @@ class MunicipalAdminApp {
     const container = document.getElementById("driver-route-manifest");
     if (!container) return;
 
+    if (!waypoints || waypoints.length === 0) {
+      container.innerHTML = `
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-slate-400 text-xs">
+          <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-sky-400"></i>
+          Click <strong>"Run TSP Route"</strong> to generate shortest fuel-saving path connecting full bins!
+        </div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+      return;
+    }
+
     let totalDistKm = 0;
     for (let i = 0; i < waypoints.length - 1; i++) {
       totalDistKm += this.getHaversineDistance(waypoints[i].coords, waypoints[i + 1].coords);
@@ -486,7 +609,7 @@ class MunicipalAdminApp {
           <span class="font-mono">${totalDistKm.toFixed(1)} km Total</span>
         </div>
         <div class="text-[11px] text-slate-300 flex items-center justify-between">
-          <span>Stops: <strong>${waypoints.length - 2} Pickups</strong></span>
+          <span>Stops: <strong>${Math.max(0, waypoints.length - 2)} Pickups</strong></span>
           <span class="text-emerald-400 font-semibold">Fuel Saved: ~${fuelSaved} L diesel</span>
         </div>
       </div>
@@ -516,8 +639,11 @@ class MunicipalAdminApp {
     const visitNextWaypoint = () => {
       if (currentIdx >= waypoints.length - 1) {
         this.state.pickupRouteActive = false;
+        this.truckMoveTimer = null;
+        this.truckStepTimeout = null;
+        this.saveState();
         this.showToast("🎉 Route Complete: All critical stations emptied & processed at Bio-Plant!", "success");
-        if (this.routePolyline) {
+        if (this.routePolyline && this.map) {
           this.map.removeLayer(this.routePolyline);
           this.routePolyline = null;
         }
@@ -531,7 +657,7 @@ class MunicipalAdminApp {
       let progress = 0;
       const steps = 12;
 
-      const moveTimer = setInterval(() => {
+      this.truckMoveTimer = setInterval(() => {
         progress++;
         const lat = fromPoint[0] + (toPoint[0] - fromPoint[0]) * (progress / steps);
         const lng = fromPoint[1] + (toPoint[1] - fromPoint[1]) * (progress / steps);
@@ -541,7 +667,8 @@ class MunicipalAdminApp {
         }
 
         if (progress >= steps) {
-          clearInterval(moveTimer);
+          clearInterval(this.truckMoveTimer);
+          this.truckMoveTimer = null;
           currentIdx++;
 
           if (nextTarget.id !== "HUB-01") {
@@ -553,6 +680,7 @@ class MunicipalAdminApp {
               station.decomposable.fillLevel = 0;
               station.decomposable.weightKg = 0.5;
 
+              this.saveState();
               this.updateMapMarker(station.id);
               this.renderStationSelector();
               this.renderFleetGrid();
@@ -562,7 +690,7 @@ class MunicipalAdminApp {
             }
           }
 
-          setTimeout(visitNextWaypoint, 1200);
+          this.truckStepTimeout = setTimeout(visitNextWaypoint, 1200);
         }
       }, 150);
     };
@@ -644,9 +772,14 @@ class MunicipalAdminApp {
         <div style="font-family: var(--font-main); padding: 4px;">
           <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #38bdf8;">${station.id}: ${station.name}</h4>
           <p style="font-size: 11px; margin: 0 0 6px 0; color: #cbd5e1;">Compostable: <strong>${station.compostable.fillLevel}%</strong> | Decomposable: <strong>${station.decomposable.fillLevel}%</strong></p>
-          <button onclick="window.adminApp.switchStation('${station.id}')" style="background: #3b82f6; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
-            Load Diagnostics
-          </button>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <button onclick="window.adminApp.switchStation('${station.id}')" style="background: #3b82f6; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+              Load Diagnostics
+            </button>
+            <button onclick="window.adminApp.dispatchDirectToStation('${station.id}')" style="background: #f43f5e; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+              🚛 Dispatch Truck
+            </button>
+          </div>
         </div>
       `);
       this.stationMarkers[station.id] = marker;
