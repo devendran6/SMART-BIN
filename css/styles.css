@@ -1,97 +1,152 @@
-/* EcoPulse SmartBin OS - Custom Styles, Multi-Location & Role-Based UI */
+/* ==========================================================================
+   EcoPulse SmartBin OS - Luxury Industrial CleanTech Design System
+   High-End Glassmorphism, Specular Metallic Surfaces & Kinetic Fluid Physics
+   ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --color-compostable: #10b981;
-  --color-compostable-dark: #047857;
-  --color-decomposable: #f59e0b;
-  --color-decomposable-dark: #b45309;
+
+  /* Palette */
+  --bg-deep: #070b14;
+  --bg-card: rgba(13, 20, 36, 0.72);
+  --bg-elevated: rgba(18, 28, 50, 0.78);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-shine: rgba(255, 255, 255, 0.15);
+  
+  --color-compost: #10b981;
+  --color-compost-glow: rgba(16, 185, 129, 0.35);
+  --color-decomp: #f59e0b;
+  --color-decomp-glow: rgba(245, 158, 11, 0.35);
+  --color-cyber-blue: #38bdf8;
+  --color-cyber-blue-glow: rgba(56, 189, 248, 0.35);
+
+  /* Apple-inspired Fluid Spring Easing */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --------------------------------------------------------------------------
+   GLOBAL RESET & SMOOTH SCROLLING
+   -------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   font-family: var(--font-main);
-  background-color: #080d1a;
+  background-color: var(--bg-deep);
   color: #f1f5f9;
   overflow-x: hidden;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 10% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 90% 40%, rgba(245, 158, 11, 0.05) 0%, transparent 45%),
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
 }
 
-/* Glassmorphism Panels */
+/* Ultra-Sleek Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060911;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 999px;
+  border: 1.5px solid #060911;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   HIGH-END SPECULAR GLASSMORPHISM PANELS
+   -------------------------------------------------------------------------- */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    0 12px 32px -8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s var(--ease-spring), border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .glass-panel-elevated {
-  background: rgba(22, 32, 54, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
+  background: var(--bg-elevated);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--border-shine);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+    0 24px 50px -12px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* Role Segmented Switcher */
-.role-segmented-switch {
-  display: flex;
-  background: rgba(15, 23, 42, 0.9);
-  padding: 3px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+.glass-panel-elevated:hover {
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
-.role-switch-btn {
-  padding: 6px 14px;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.25s ease;
-  cursor: pointer;
+/* Subtle Shimmer Sweep for Primary CTA Buttons */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s var(--ease-spring);
 }
 
-.role-switch-btn:hover {
-  color: #fff;
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.75s ease;
 }
 
-.role-switch-btn.active-citizen {
-  background: #10b981;
-  color: #ffffff;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+.btn-shimmer:hover::before {
+  left: 200%;
 }
 
-.role-switch-btn.active-admin {
-  background: #3b82f6;
-  color: #ffffff;
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+.btn-shimmer:active {
+  transform: scale(0.975);
 }
 
-/* Role-conditional visibility */
-body.mode-citizen .admin-only {
-  display: none !important;
-}
-
-body.mode-admin .citizen-only {
-  display: none !important;
-}
-
-/* ==========================================================================
-   REALISTIC PHYSICAL DUSTBIN 3D UI COMPONENT
-   ========================================================================== */
-
+/* --------------------------------------------------------------------------
+   REALISTIC PHYSICAL DUSTBIN 3D COMPONENT
+   -------------------------------------------------------------------------- */
 .dustbin-perspective-stage {
-  perspective: 1200px;
+  perspective: 1400px;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 10px 10px 10px;
+  padding: 16px 8px 8px 8px;
 }
 
 .dustbin-container {
@@ -101,12 +156,14 @@ body.mode-admin .citizen-only {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s var(--ease-spring);
+  contain: layout style;
 }
 
+/* Specular Anodized Lid Assembly */
 .dustbin-lid-assembly {
   position: relative;
-  width: 92%;
+  width: 94%;
   z-index: 35;
   display: flex;
   flex-direction: column;
@@ -114,72 +171,78 @@ body.mode-admin .citizen-only {
 }
 
 .dustbin-handle-bar {
-  width: 90px;
+  width: 96px;
   height: 10px;
-  background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
-  border-radius: 6px 6px 0 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, #64748b 0%, #1e293b 60%, #0f172a 100%);
+  border-radius: 8px 8px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-bottom: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .dustbin-lid {
   position: relative;
   width: 100%;
-  height: 48px;
-  border-radius: 16px 16px 6px 6px;
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+  height: 52px;
+  border-radius: 18px 18px 8px 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 -6px 20px rgba(0, 0, 0, 0.5), 
+    inset 0 3px 6px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.5);
   transform-origin: top center;
   transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition: transform 0.55s var(--ease-spring), box-shadow 0.4s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
   cursor: pointer;
+  user-select: none;
 }
 
 .dustbin-lid.lid-open {
-  transform: rotateX(-75deg) translateY(-14px) scale(0.96);
-  box-shadow: 0 25px 35px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.4);
+  transform: rotateX(-78deg) translateY(-16px) scale(0.96);
+  box-shadow: 
+    0 30px 45px -10px rgba(0, 0, 0, 0.75), 
+    inset 0 0 16px rgba(255, 255, 255, 0.4);
 }
 
 .dustbin-compostable .dustbin-lid {
-  background: linear-gradient(180deg, #059669 0%, #047857 50%, #064e3b 100%);
+  background: linear-gradient(180deg, #10b981 0%, #059669 45%, #047857 75%, #064e3b 100%);
   border-color: #34d399;
 }
 
 .dustbin-decomposable .dustbin-lid {
-  background: linear-gradient(180deg, #d97706 0%, #b45309 50%, #78350f 100%);
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 45%, #b45309 75%, #78350f 100%);
   border-color: #fbbf24;
 }
 
+/* Touchless Ultrasonic Optical Dome */
 .ultrasonic-lid-eyes {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(7, 11, 20, 0.85);
   padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .sensor-optic {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle, #38bdf8 30%, #0284c7 80%);
-  border: 1px solid #7dd3fc;
-  box-shadow: 0 0 8px #38bdf8;
-  animation: pulseOptic 2.5s infinite ease-in-out;
+  background: radial-gradient(circle, #7dd3fc 20%, #0284c7 80%);
+  border: 1px solid #bae6fd;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: pulseOptic 2.4s infinite var(--ease-fluid);
 }
 
 @keyframes pulseOptic {
-  0%, 100% { box-shadow: 0 0 6px #38bdf8; }
-  50% { box-shadow: 0 0 14px #38bdf8, 0 0 4px #fff; }
+  0%, 100% { box-shadow: 0 0 6px #38bdf8; transform: scale(1); }
+  50% { box-shadow: 0 0 15px #38bdf8, 0 0 4px #ffffff; transform: scale(1.08); }
 }
 
 .lid-led-status {
@@ -190,7 +253,7 @@ body.mode-admin .citizen-only {
   font-family: var(--font-mono);
   font-weight: 700;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .lid-led-dot {
@@ -199,28 +262,30 @@ body.mode-admin .citizen-only {
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
+  transition: all 0.3s ease;
 }
 
 .lid-led-dot.dot-open {
   background: #38bdf8;
-  box-shadow: 0 0 10px #38bdf8;
-  animation: blinkFast 0.5s infinite alternate;
+  box-shadow: 0 0 12px #38bdf8;
+  animation: blinkFast 0.45s infinite alternate;
 }
 
 @keyframes blinkFast {
-  from { opacity: 0.4; }
+  from { opacity: 0.3; }
   to { opacity: 1; }
 }
 
+/* Neck Collar & Ambient Aura Halo */
 .dustbin-neck-collar {
   width: 96%;
-  height: 12px;
-  background: #1e293b;
+  height: 13px;
+  background: #1a2436;
   border-radius: 6px;
   margin-top: -3px;
   z-index: 28;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
 }
@@ -228,34 +293,37 @@ body.mode-admin .citizen-only {
 .dustbin-neck-halo {
   position: absolute;
   inset: 0;
-  opacity: 0.85;
+  opacity: 0.9;
   transition: background 0.4s ease;
 }
 
 .dustbin-compostable .dustbin-neck-halo {
   background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
-  box-shadow: 0 0 14px #10b981;
+  box-shadow: 0 0 16px #10b981;
 }
 
 .dustbin-decomposable .dustbin-neck-halo {
   background: linear-gradient(90deg, transparent 0%, #f59e0b 50%, transparent 100%);
-  box-shadow: 0 0 14px #f59e0b;
+  box-shadow: 0 0 16px #f59e0b;
 }
 
+/* Chiseled Titanium Bin Body */
 .dustbin-body {
   position: relative;
-  width: 88%;
-  height: 380px;
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 60%, #090e17 100%);
-  border-radius: 8px 8px 24px 24px;
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.7), 0 20px 30px -10px rgba(0,0,0,0.7);
+  width: 90%;
+  height: 385px;
+  background: linear-gradient(180deg, #1b2538 0%, #0d1525 50%, #070c17 100%);
+  border-radius: 8px 8px 26px 26px;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    inset 0 3px 12px rgba(0, 0, 0, 0.8), 
+    0 24px 38px -10px rgba(0, 0, 0, 0.75);
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
   z-index: 20;
-  transition: all 0.4s ease;
+  transition: all 0.4s var(--ease-spring);
 }
 
 .dustbin-ribbed-texture {
@@ -265,38 +333,63 @@ body.mode-admin .citizen-only {
     180deg,
     transparent 0px,
     transparent 28px,
-    rgba(255, 255, 255, 0.03) 29px,
-    rgba(0, 0, 0, 0.25) 30px
+    rgba(255, 255, 255, 0.025) 29px,
+    rgba(0, 0, 0, 0.28) 30px
   );
   pointer-events: none;
   z-index: 22;
 }
 
+/* Embedded Micro-OLED Telemetry Bar */
 .dustbin-embedded-screen {
   margin-top: 14px;
-  width: 84%;
-  background: rgba(11, 15, 25, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 86%;
+  background: rgba(8, 12, 22, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0,0,0,0.4);
+  box-shadow: 
+    inset 0 0 12px rgba(0, 0, 0, 0.9), 
+    0 2px 8px rgba(0, 0, 0, 0.5);
   z-index: 26;
 }
 
+/* Crystal Cutaway Window with Laser Depth Gauge */
 .dustbin-cutaway-window {
   position: relative;
-  width: 84%;
-  height: 245px;
+  width: 86%;
+  height: 248px;
   margin-top: 12px;
-  background: rgba(5, 10, 20, 0.85);
-  border-radius: 14px;
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(4, 8, 16, 0.9);
+  border-radius: 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
   overflow: hidden;
-  box-shadow: inset 0 4px 15px rgba(0,0,0,0.9);
+  box-shadow: 
+    inset 0 6px 18px rgba(0, 0, 0, 0.95),
+    0 0 1px rgba(255, 255, 255, 0.2);
   z-index: 25;
+}
+
+/* Specular Crystal Glass Reflection */
+.dustbin-cutaway-window::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 35%,
+    rgba(255, 255, 255, 0.02) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 32;
 }
 
 .cutaway-ruler {
@@ -324,20 +417,21 @@ body.mode-admin .citizen-only {
   content: '';
   width: 8px;
   height: 1px;
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.35);
 }
 
+/* Ultrasonic Scanning Guide Beams */
 .ultrasonic-beam-guide {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   z-index: 28;
   pointer-events: none;
 }
@@ -345,7 +439,7 @@ body.mode-admin .citizen-only {
 .ultrasonic-wave-ring {
   width: 100%;
   height: 3px;
-  border-bottom: 2px solid rgba(56, 189, 248, 0.7);
+  border-bottom: 2px solid rgba(56, 189, 248, 0.85);
   border-radius: 50%;
   animation: beamScan 1.6s infinite linear;
 }
@@ -361,17 +455,18 @@ body.mode-admin .citizen-only {
 }
 
 @keyframes beamScan {
-  0% { opacity: 0; transform: translateY(-5px) scale(0.6); }
+  0% { opacity: 0; transform: translateY(-5px) scale(0.5); }
   50% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(22px) scale(1.3); }
+  100% { opacity: 0; transform: translateY(24px) scale(1.35); }
 }
 
+/* Kinetic Fluid Waste Fill */
 .dustbin-waste-fill {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: height 0.85s var(--ease-spring);
   z-index: 26;
   display: flex;
   flex-direction: column;
@@ -379,13 +474,13 @@ body.mode-admin .citizen-only {
 }
 
 .waste-fill-compostable {
-  background: linear-gradient(180deg, #10b981 0%, #059669 30%, #047857 70%, #064e3b 100%);
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(180deg, #10b981 0%, #059669 25%, #047857 65%, #064e3b 100%);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.45);
 }
 
 .waste-fill-decomposable {
-  background: linear-gradient(180deg, #f59e0b 0%, #d97706 30%, #b45309 70%, #78350f 100%);
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 25%, #b45309 65%, #78350f 100%);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.45);
 }
 
 .waste-wave-top {
@@ -395,7 +490,7 @@ body.mode-admin .citizen-only {
   width: 200%;
   height: 18px;
   overflow: hidden;
-  animation: wasteWaveMove 4s linear infinite;
+  animation: wasteWaveMove 3.8s linear infinite;
   z-index: 27;
 }
 
@@ -415,19 +510,20 @@ body.mode-admin .citizen-only {
 .floating-waste-badge {
   position: absolute;
   font-size: 16px;
-  opacity: 0.75;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
   animation: driftWaste 4s infinite ease-in-out;
 }
 
 @keyframes driftWaste {
-  0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50% { transform: translateY(-8px) rotate(4deg); }
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-9px) rotate(5deg); }
 }
 
+/* Tactile Spring-Loaded Foot Pedal */
 .dustbin-base-assembly {
   position: relative;
-  width: 94%;
+  width: 96%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -437,40 +533,40 @@ body.mode-admin .citizen-only {
 
 .dustbin-foot-pedal {
   margin: 0 auto;
-  width: 72px;
-  height: 16px;
-  background: linear-gradient(180deg, #64748b 0%, #334155 60%, #1e293b 100%);
-  border-radius: 4px 4px 6px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+  width: 80px;
+  height: 18px;
+  background: linear-gradient(180deg, #64748b 0%, #334155 55%, #1e293b 100%);
+  border-radius: 5px 5px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.16s var(--ease-spring), background 0.16s ease;
 }
 
 .dustbin-foot-pedal::after {
   content: '';
-  width: 44px;
+  width: 48px;
   height: 3px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.45);
   border-radius: 2px;
 }
 
 .dustbin-foot-pedal:active, .dustbin-foot-pedal.pedal-pressed {
-  transform: translateY(4px) scale(0.96);
+  transform: translateY(5px) scale(0.95);
   background: #1e293b;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .dustbin-wheel {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: radial-gradient(circle, #94a3b8 20%, #334155 50%, #0f172a 90%);
+  background: radial-gradient(circle, #94a3b8 20%, #334155 55%, #0f172a 90%);
   border: 3px solid #1e293b;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -478,8 +574,8 @@ body.mode-admin .citizen-only {
 
 .dustbin-wheel::after {
   content: '';
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: #cbd5e1;
 }
@@ -488,27 +584,22 @@ body.mode-admin .citizen-only {
   position: absolute;
   top: 110px;
   width: 14px;
-  height: 48px;
+  height: 50px;
   background: #1e293b;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-.dustbin-side-handle.handle-left {
-  left: -9px;
-}
-
-.dustbin-side-handle.handle-right {
-  right: -9px;
-}
+.dustbin-side-handle.handle-left { left: -9px; }
+.dustbin-side-handle.handle-right { right: -9px; }
 
 .dropping-trash-item {
   position: absolute;
   z-index: 50;
   font-size: 28px;
   pointer-events: none;
-  animation: dropIntoBin 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: dropIntoBin 0.95s var(--ease-spring) forwards;
 }
 
 @keyframes dropIntoBin {
@@ -517,11 +608,13 @@ body.mode-admin .citizen-only {
   100% { opacity: 0; transform: translateY(220px) scale(0.3) rotate(360deg); }
 }
 
-/* Multi-Location Station & Fleet Styles */
+/* --------------------------------------------------------------------------
+   STATION SELECTORS & FLEET TILES
+   -------------------------------------------------------------------------- */
 .station-pill {
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 14px;
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(22, 33, 56, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
   font-size: 12px;
@@ -530,70 +623,95 @@ body.mode-admin .citizen-only {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s var(--ease-spring);
   white-space: nowrap;
 }
 
 .station-pill:hover {
-  background: rgba(30, 41, 59, 0.95);
+  background: rgba(30, 45, 75, 0.9);
   border-color: rgba(255, 255, 255, 0.25);
   color: #fff;
+  transform: translateY(-1px);
 }
 
 .station-pill.active {
   background: rgba(16, 185, 129, 0.2);
   border-color: #10b981;
   color: #34d399;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-}
-
-.station-pill.has-critical {
-  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
 }
 
 .station-pill.has-critical.active {
   background: rgba(239, 68, 68, 0.25);
   border-color: #ef4444;
   color: #fca5a5;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
 
 .fleet-card {
   padding: 16px;
-  border-radius: 18px;
-  background: rgba(15, 23, 42, 0.85);
+  border-radius: 20px;
+  background: rgba(16, 25, 46, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.35s var(--ease-spring), border-color 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
 .fleet-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(22, 32, 54, 0.9);
+  transform: translateY(-4px) translateZ(0);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(24, 38, 68, 0.85);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
 }
 
 .fleet-card.active-fleet {
-  border-color: #10b981;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+  border-color: #38bdf8;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   LEAFLET CYBER-DARK MAP STYLING
+   Transforms default bright OSM into a high-tech obsidian satellite display
+   -------------------------------------------------------------------------- */
+#smartbin-map {
+  width: 100% !important;
+  height: 480px !important;
+  min-height: 480px !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background-color: #0b1329 !important;
+  border-radius: 1.25rem;
+}
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: #0b1329 !important;
+  border-radius: 1.25rem;
+  font-family: var(--font-main) !important;
+}
+
+/* High-Tech Dark Tile Filter */
+.leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(92%) saturate(135%);
 }
 
 .pulse-marker-critical {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #ef4444;
+  background: #f43f5e;
   border: 3px solid white;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px #ef4444;
+  box-shadow: 0 0 24px #f43f5e;
   animation: markerPing 1.5s infinite;
 }
 
 @keyframes markerPing {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); box-shadow: 0 0 30px #ef4444; }
+  50% { transform: scale(1.15); box-shadow: 0 0 32px #f43f5e; }
 }
 
 .pulse-marker-warning {
@@ -605,7 +723,7 @@ body.mode-admin .citizen-only {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 14px #f59e0b;
+  box-shadow: 0 0 16px #f59e0b;
 }
 
 .pulse-marker-normal {
@@ -617,7 +735,7 @@ body.mode-admin .citizen-only {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 12px #10b981;
+  box-shadow: 0 0 14px #10b981;
 }
 
 .waypoint-badge {
@@ -634,13 +752,13 @@ body.mode-admin .citizen-only {
   font-weight: 700;
 }
 
-/* Models */
+/* Bin Style Presets */
 .model-smart-kiosk .dustbin-body {
   border-radius: 12px 12px 28px 28px;
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #050b14 100%);
 }
 .model-wheelie-bin .dustbin-body {
-  border-radius: 4px 4px 16px 16px;
+  border-radius: 4px 4px 18px 18px;
 }
 .model-wheelie-bin.dustbin-compostable .dustbin-body {
   background: linear-gradient(180deg, #064e3b 0%, #022c22 100%);
@@ -666,27 +784,4 @@ body.mode-admin .citizen-only {
 @keyframes binDangerFlash {
   0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); border-color: rgba(239, 68, 68, 0.8); }
   100% { box-shadow: 0 0 35px 8px rgba(239, 68, 68, 0.5); border-color: #ef4444; }
-}
-
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #080d1a; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-/* Dedicated Leaflet Map Container Heights */
-#smartbin-map {
-  width: 100% !important;
-  height: 480px !important;
-  min-height: 480px !important;
-  position: relative !important;
-  z-index: 10 !important;
-  background-color: #0b1329 !important;
-  border-radius: 1rem;
-}
-
-.leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
-  background-color: #0b1329 !important;
-  border-radius: 1rem;
 }
