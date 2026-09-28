@@ -1,0 +1,577 @@
+/* EcoPulse SmartBin OS - Custom Styles & Realistic Dustbin UI Animations */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-compostable: #10b981;
+  --color-compostable-dark: #047857;
+  --color-decomposable: #f59e0b;
+  --color-decomposable-dark: #b45309;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: #080d1a;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-elevated {
+  background: rgba(22, 32, 54, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   REALISTIC PHYSICAL DUSTBIN 3D UI COMPONENT
+   ========================================================================== */
+
+.dustbin-perspective-stage {
+  perspective: 1200px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 10px 10px 10px;
+}
+
+/* Dustbin Outer Chassis */
+.dustbin-container {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Top Sensor Arch / Lid Assembly */
+.dustbin-lid-assembly {
+  position: relative;
+  width: 92%;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hood Handle & IR Motion Detector */
+.dustbin-handle-bar {
+  width: 90px;
+  height: 10px;
+  background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+  border-radius: 6px 6px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Physical Motorized Lid Flap */
+.dustbin-lid {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  border-radius: 16px 16px 6px 6px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.25);
+  transform-origin: top center;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+/* Lid Open State (Animated) */
+.dustbin-lid.lid-open {
+  transform: rotateX(-75deg) translateY(-14px) scale(0.96);
+  box-shadow: 0 25px 35px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Bin Lid Theme: Compostable */
+.dustbin-compostable .dustbin-lid {
+  background: linear-gradient(180deg, #059669 0%, #047857 50%, #064e3b 100%);
+  border-color: #34d399;
+}
+
+/* Bin Lid Theme: Decomposable */
+.dustbin-decomposable .dustbin-lid {
+  background: linear-gradient(180deg, #d97706 0%, #b45309 50%, #78350f 100%);
+  border-color: #fbbf24;
+}
+
+/* Dual Ultrasonic Eyes on Lid */
+.ultrasonic-lid-eyes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sensor-optic {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #38bdf8 30%, #0284c7 80%);
+  border: 1px solid #7dd3fc;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: pulseOptic 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseOptic {
+  0%, 100% { box-shadow: 0 0 6px #38bdf8; }
+  50% { box-shadow: 0 0 14px #38bdf8, 0 0 4px #fff; }
+}
+
+/* Lid Status LED Indicator */
+.lid-led-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.lid-led-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.lid-led-dot.dot-open {
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: blinkFast 0.5s infinite alternate;
+}
+
+@keyframes blinkFast {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* Glowing Rim Ring Under Lid */
+.dustbin-neck-collar {
+  width: 96%;
+  height: 12px;
+  background: #1e293b;
+  border-radius: 6px;
+  margin-top: -3px;
+  z-index: 28;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.dustbin-neck-halo {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  transition: background 0.4s ease;
+}
+
+.dustbin-compostable .dustbin-neck-halo {
+  background: linear-gradient(90deg, transparent 0%, #10b981 50%, transparent 100%);
+  box-shadow: 0 0 14px #10b981;
+}
+
+.dustbin-decomposable .dustbin-neck-halo {
+  background: linear-gradient(90deg, transparent 0%, #f59e0b 50%, transparent 100%);
+  box-shadow: 0 0 14px #f59e0b;
+}
+
+/* Main Dustbin Body */
+.dustbin-body {
+  position: relative;
+  width: 88%;
+  height: 380px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 60%, #090e17 100%);
+  border-radius: 8px 8px 24px 24px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.7), 0 20px 30px -10px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  z-index: 20;
+  transition: all 0.4s ease;
+}
+
+/* Subtle Ribbed Lines on Trash Can Body for Realistic Texture */
+.dustbin-ribbed-texture {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 28px,
+    rgba(255, 255, 255, 0.03) 29px,
+    rgba(0, 0, 0, 0.25) 30px
+  );
+  pointer-events: none;
+  z-index: 22;
+}
+
+/* Embedded Front OLED Screen on Bin */
+.dustbin-embedded-screen {
+  margin-top: 14px;
+  width: 84%;
+  background: rgba(11, 15, 25, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 26;
+}
+
+/* See-through Cutaway Fill Window inside Bin */
+.dustbin-cutaway-window {
+  position: relative;
+  width: 84%;
+  height: 245px;
+  margin-top: 12px;
+  background: rgba(5, 10, 20, 0.85);
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.9);
+  z-index: 25;
+}
+
+/* Depth Measurement Scale Marks */
+.cutaway-ruler {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.cutaway-ruler-item {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(148, 163, 184, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cutaway-ruler-item::after {
+  content: '';
+  width: 8px;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* Ultrasonic Wave Guide in Cutaway */
+.ultrasonic-beam-guide {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 28;
+  pointer-events: none;
+}
+
+.ultrasonic-wave-ring {
+  width: 100%;
+  height: 3px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.7);
+  border-radius: 50%;
+  animation: beamScan 1.6s infinite linear;
+}
+
+.ultrasonic-wave-ring:nth-child(2) {
+  width: 75%;
+  animation-delay: 0.4s;
+}
+
+.ultrasonic-wave-ring:nth-child(3) {
+  width: 50%;
+  animation-delay: 0.8s;
+}
+
+@keyframes beamScan {
+  0% { opacity: 0; transform: translateY(-5px) scale(0.6); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(22px) scale(1.3); }
+}
+
+/* Fluid / Accumulated Waste Level */
+.dustbin-waste-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Compostable Waste Pile Visuals */
+.waste-fill-compostable {
+  background: linear-gradient(180deg, #10b981 0%, #059669 30%, #047857 70%, #064e3b 100%);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+/* Decomposable Waste Pile Visuals */
+.waste-fill-decomposable {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 30%, #b45309 70%, #78350f 100%);
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+}
+
+/* Top Wave of Waste */
+.waste-wave-top {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  width: 200%;
+  height: 18px;
+  overflow: hidden;
+  animation: wasteWaveMove 4s linear infinite;
+  z-index: 27;
+}
+
+@keyframes wasteWaveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Floating Waste Item Badges Inside Bin */
+.stacked-waste-icons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 29;
+}
+
+.floating-waste-badge {
+  position: absolute;
+  font-size: 16px;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  animation: driftWaste 4s infinite ease-in-out;
+}
+
+@keyframes driftWaste {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+/* Physical Dustbin Base & Foot Pedal */
+.dustbin-base-assembly {
+  position: relative;
+  width: 94%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -6px;
+  z-index: 25;
+}
+
+/* Bottom Foot Pedal */
+.dustbin-foot-pedal {
+  margin: 0 auto;
+  width: 72px;
+  height: 16px;
+  background: linear-gradient(180deg, #64748b 0%, #334155 60%, #1e293b 100%);
+  border-radius: 4px 4px 6px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.dustbin-foot-pedal::after {
+  content: '';
+  width: 44px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+}
+
+.dustbin-foot-pedal:active, .dustbin-foot-pedal.pedal-pressed {
+  transform: translateY(4px) scale(0.96);
+  background: #1e293b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Realistic Wheels (Wheelie Bin Model) */
+.dustbin-wheel {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #94a3b8 20%, #334155 50%, #0f172a 90%);
+  border: 3px solid #1e293b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dustbin-wheel::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+/* Side Grip Handles on Bin */
+.dustbin-side-handle {
+  position: absolute;
+  top: 110px;
+  width: 14px;
+  height: 48px;
+  background: #1e293b;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.dustbin-side-handle.handle-left {
+  left: -9px;
+}
+
+.dustbin-side-handle.handle-right {
+  right: -9px;
+}
+
+/* ==========================================================================
+   DROPPING TRASH ANIMATION (PHYSICAL DISPOSAL EFFECT)
+   ========================================================================== */
+
+.dropping-trash-item {
+  position: absolute;
+  z-index: 50;
+  font-size: 28px;
+  pointer-events: none;
+  animation: dropIntoBin 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes dropIntoBin {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1.3) rotate(0deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(140px) scale(0.9) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(220px) scale(0.3) rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   DUSTBIN AESTHETIC MODEL STYLES (SWITCHER)
+   ========================================================================== */
+
+/* Model 1: Futuristic Smart City Kiosk (Default) */
+.model-smart-kiosk .dustbin-body {
+  border-radius: 12px 12px 28px 28px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #050b14 100%);
+}
+
+/* Model 2: Curbside Wheelie Bin */
+.model-wheelie-bin .dustbin-body {
+  border-radius: 4px 4px 16px 16px;
+}
+.model-wheelie-bin.dustbin-compostable .dustbin-body {
+  background: linear-gradient(180deg, #064e3b 0%, #022c22 100%);
+  border-color: #059669;
+}
+.model-wheelie-bin.dustbin-decomposable .dustbin-body {
+  background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+  border-color: #d97706;
+}
+
+/* Model 3: Brushed Stainless Steel */
+.model-stainless-steel .dustbin-body {
+  background: linear-gradient(135deg, #64748b 0%, #94a3b8 25%, #475569 50%, #cbd5e1 75%, #334155 100%);
+  border-color: #e2e8f0;
+}
+.model-stainless-steel .dustbin-lid {
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 100%) !important;
+  border-color: #f8fafc !important;
+}
+
+/* ==========================================================================
+   ALERTS, GLOWS, AND OVERFLOW WARNINGS
+   ========================================================================== */
+
+.critical-bin-alarm {
+  animation: binDangerFlash 1.2s infinite alternate;
+}
+
+@keyframes binDangerFlash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    border-color: rgba(239, 68, 68, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 35px 8px rgba(239, 68, 68, 0.5);
+    border-color: #ef4444;
+  }
+}
+
+/* General Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090e17;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
