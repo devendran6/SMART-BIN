@@ -216,57 +216,57 @@ class MunicipalAdminApp {
       const isCritical = maxFill >= 80;
       const isActive = station.id === this.state.currentStationId;
 
-      let badgeColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      let badgeColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
       let statusText = "Normal";
       if (isCritical) {
-        badgeColor = "bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse";
+        badgeColor = "bg-rose-50 text-rose-800 border-rose-200";
         statusText = "Needs Pickup!";
       } else if (maxFill >= 60) {
-        badgeColor = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+        badgeColor = "bg-amber-50 text-amber-800 border-amber-200";
         statusText = "Moderate";
       }
 
       return `
         <div onclick="window.adminApp.switchStation('${station.id}')" class="fleet-card ${isActive ? 'active-fleet' : ''}">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-white font-mono flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500 animate-ping' : 'bg-emerald-400'}"></span>
+            <span class="text-xs font-bold text-slate-900 font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full ${isCritical ? 'bg-rose-600 animate-ping' : 'bg-emerald-600'}"></span>
               ${station.id}
             </span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeColor}">
               ${statusText}
             </span>
           </div>
 
-          <h5 class="text-xs font-semibold text-slate-200 line-clamp-1 mb-1">${station.name}</h5>
-          <p class="text-[11px] text-slate-400 mb-3">${station.zone}</p>
+          <h5 class="text-xs font-semibold text-slate-800 line-clamp-1 mb-1">${station.name}</h5>
+          <p class="text-[11px] text-slate-500 mb-3">${station.zone}</p>
 
           <div class="space-y-1.5 text-[11px] font-mono">
             <div>
-              <div class="flex justify-between text-slate-400 text-[10px]">
+              <div class="flex justify-between text-slate-600 text-[10px]">
                 <span>Compostable:</span>
-                <span class="text-emerald-400 font-bold">${compFill}%</span>
+                <span class="text-emerald-700 font-bold">${compFill}%</span>
               </div>
-              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 transition-all" style="width: ${compFill}%"></div>
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-600 transition-all" style="width: ${compFill}%"></div>
               </div>
             </div>
             <div>
-              <div class="flex justify-between text-slate-400 text-[10px]">
+              <div class="flex justify-between text-slate-600 text-[10px]">
                 <span>Decomposable:</span>
-                <span class="text-amber-400 font-bold">${decompFill}%</span>
+                <span class="text-amber-700 font-bold">${decompFill}%</span>
               </div>
-              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-amber-500 transition-all" style="width: ${decompFill}%"></div>
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-amber-600 transition-all" style="width: ${decompFill}%"></div>
               </div>
             </div>
           </div>
 
-          <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
             <span class="flex items-center gap-1">
-              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-400"></i> ${station.batteryPercent}%
+              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-700"></i> ${station.batteryPercent}%
             </span>
-            <span class="text-sky-400 font-semibold hover:underline">Inspect &rarr;</span>
+            <span class="text-slate-800 font-semibold hover:underline">Inspect &rarr;</span>
           </div>
         </div>
       `;
@@ -586,8 +586,8 @@ class MunicipalAdminApp {
 
     if (!waypoints || waypoints.length === 0) {
       container.innerHTML = `
-        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-slate-400 text-xs">
-          <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-sky-400"></i>
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center text-slate-500 text-xs">
+          <i data-lucide="compass" class="w-6 h-6 mx-auto mb-2 opacity-50 text-slate-600"></i>
           Click <strong>"Run TSP Route"</strong> to generate shortest fuel-saving path connecting full bins!
         </div>
       `;
@@ -603,14 +603,14 @@ class MunicipalAdminApp {
     const fuelSaved = (totalDistKm * 0.42).toFixed(1);
 
     container.innerHTML = `
-      <div class="p-3.5 rounded-2xl bg-sky-950/40 border border-sky-800/60 mb-3 space-y-2">
-        <div class="flex items-center justify-between text-xs font-bold text-sky-300">
-          <span class="flex items-center gap-1.5"><i data-lucide="navigation" class="w-4 h-4"></i> Optimal TSP Path Active</span>
-          <span class="font-mono">${totalDistKm.toFixed(1)} km Total</span>
+      <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 mb-3 space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-800">
+          <span class="flex items-center gap-1.5"><i data-lucide="navigation" class="w-4 h-4 text-emerald-700"></i> Optimal TSP Path Active</span>
+          <span class="font-mono text-emerald-800">${totalDistKm.toFixed(1)} km Total</span>
         </div>
-        <div class="text-[11px] text-slate-300 flex items-center justify-between">
-          <span>Stops: <strong>${Math.max(0, waypoints.length - 2)} Pickups</strong></span>
-          <span class="text-emerald-400 font-semibold">Fuel Saved: ~${fuelSaved} L diesel</span>
+        <div class="text-[11px] text-slate-600 flex items-center justify-between">
+          <span>Stops: <strong class="text-slate-800">${Math.max(0, waypoints.length - 2)} Pickups</strong></span>
+          <span class="text-emerald-700 font-semibold">Fuel Saved: ~${fuelSaved} L diesel</span>
         </div>
       </div>
 
@@ -618,11 +618,11 @@ class MunicipalAdminApp {
         ${waypoints.map((wp, idx) => {
           const isStartOrEnd = wp.id === "HUB-01";
           return `
-            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-800/50 border border-slate-700/60 text-xs">
+            <div class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 text-xs">
               <span class="waypoint-badge">#${idx + 1}</span>
               <div class="flex-1 min-w-0">
-                <div class="font-semibold text-slate-200 truncate">${wp.name}</div>
-                <div class="text-[10px] text-slate-400 font-mono">${isStartOrEnd ? 'Processing Central Hub' : wp.id + ' Pick Up'}</div>
+                <div class="font-semibold text-slate-800 truncate">${wp.name}</div>
+                <div class="text-[10px] text-slate-500 font-mono">${isStartOrEnd ? 'Processing Central Hub' : wp.id + ' Pick Up'}</div>
               </div>
             </div>
           `;
@@ -790,13 +790,13 @@ class MunicipalAdminApp {
       const marker = L.marker(station.coords, { icon: icon }).addTo(this.map);
       marker.bindPopup(`
         <div style="font-family: var(--font-main); padding: 4px;">
-          <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #38bdf8;">${station.id}: ${station.name}</h4>
-          <p style="font-size: 11px; margin: 0 0 6px 0; color: #cbd5e1;">Compostable: <strong>${station.compostable.fillLevel}%</strong> | Decomposable: <strong>${station.decomposable.fillLevel}%</strong></p>
+          <h4 style="font-weight: 700; font-size: 13px; margin: 0 0 4px 0; color: #0f172a;">${station.id}: ${station.name}</h4>
+          <p style="font-size: 11px; margin: 0 0 6px 0; color: #475569;">Compostable: <strong>${station.compostable.fillLevel}%</strong> | Decomposable: <strong>${station.decomposable.fillLevel}%</strong></p>
           <div style="display: flex; gap: 6px; margin-top: 6px;">
-            <button onclick="window.adminApp.switchStation('${station.id}')" style="background: #3b82f6; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+            <button onclick="window.adminApp.switchStation('${station.id}')" style="background: #15803d; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
               Load Diagnostics
             </button>
-            <button onclick="window.adminApp.dispatchDirectToStation('${station.id}')" style="background: #f43f5e; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+            <button onclick="window.adminApp.dispatchDirectToStation('${station.id}')" style="background: #e11d48; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
               🚛 Dispatch Truck
             </button>
           </div>
@@ -823,27 +823,27 @@ class MunicipalAdminApp {
     }
 
     container.innerHTML = this.state.historyLogs.slice(0, 6).map(log => {
-      let iconColor = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+      let iconColor = "text-emerald-700 bg-emerald-50 border-emerald-200";
       let icon = "arrow-down-circle";
       if (log.type === "empty") {
-        iconColor = "text-blue-400 bg-blue-500/10 border-blue-500/20";
+        iconColor = "text-slate-800 bg-slate-100 border-slate-300";
         icon = "refresh-cw";
       } else if (log.type === "alert") {
-        iconColor = "text-rose-400 bg-rose-500/10 border-rose-500/20";
+        iconColor = "text-rose-700 bg-rose-50 border-rose-200";
         icon = "alert-circle";
       }
 
       return `
-        <div class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-800/70 transition-all">
+        <div class="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
           <div class="p-2 rounded-lg border ${iconColor} flex-shrink-0">
             <i data-lucide="${icon}" class="w-4 h-4"></i>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-xs font-semibold text-slate-200">${log.station || 'Station'}</span>
-              <span class="text-[10px] font-mono text-slate-400">${log.time}</span>
+              <span class="text-xs font-semibold text-slate-900">${log.station || 'Station'}</span>
+              <span class="text-[10px] font-mono text-slate-500">${log.time}</span>
             </div>
-            <p class="text-xs text-slate-400 truncate mt-0.5">${log.note}</p>
+            <p class="text-xs text-slate-600 truncate mt-0.5">${log.note}</p>
           </div>
         </div>
       `;
@@ -887,12 +887,12 @@ class MunicipalAdminApp {
     if (!container) return;
 
     const toast = document.createElement("div");
-    let borderColor = "border-sky-500/50 bg-slate-900/90 text-sky-300";
-    if (type === "warning") borderColor = "border-amber-500/50 bg-slate-900/90 text-amber-300";
-    if (type === "danger") borderColor = "border-rose-500/50 bg-slate-900/90 text-rose-300";
-    if (type === "success") borderColor = "border-emerald-500/50 bg-slate-900/90 text-emerald-300";
+    let borderColor = "border-slate-300 bg-white text-slate-800 shadow-md";
+    if (type === "warning") borderColor = "border-amber-300 bg-white text-slate-800 shadow-md";
+    if (type === "danger") borderColor = "border-rose-300 bg-white text-slate-800 shadow-md";
+    if (type === "success") borderColor = "border-emerald-300 bg-white text-slate-800 shadow-md";
 
-    toast.className = `px-4 py-3 rounded-xl border backdrop-blur-md shadow-2xl text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${borderColor}`;
+    toast.className = `px-4 py-3 rounded-xl border text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${borderColor}`;
     toast.innerHTML = message;
 
     container.appendChild(toast);

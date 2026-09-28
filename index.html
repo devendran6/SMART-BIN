@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoPulse SmartBin OS | Citizen Eco-Portal</title>
+  <title>EcoPulse SmartBin OS | Public Citizen Waste &amp; Recycling Portal</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts & Custom CSS -->
-  <link rel="stylesheet" href="css/styles.css?v=2.1">
+  <!-- Civic Portal Design System -->
+  <link rel="stylesheet" href="css/styles.css?v=2.2">
   
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -27,6 +27,15 @@
       theme: {
         extend: {
           colors: {
+            civic: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d'
+            },
             compost: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
             decomp: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
           }
@@ -35,62 +44,55 @@
     }
   </script>
 </head>
-<body class="bg-[#070b14] text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-white relative">
-
-  <!-- Atmospheric Ambient Light Mesh (Clean, Soft & Elegant) -->
-  <div class="fixed top-0 left-1/4 w-[600px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none -z-10"></div>
-  <div class="fixed top-1/3 right-10 w-[550px] h-[450px] bg-sky-500/10 rounded-full blur-[170px] pointer-events-none -z-10"></div>
-  <div class="fixed bottom-10 left-1/3 w-[650px] h-[550px] bg-amber-500/5 rounded-full blur-[180px] pointer-events-none -z-10"></div>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-emerald-600 selection:text-white relative">
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Navigation Bar -->
-  <header class="sticky top-0 z-40 backdrop-blur-2xl bg-[#070b14]/85 border-b border-white/[0.08] shadow-2xl shadow-black/40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3">
+  <!-- Civic Header Navigation -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
-      <!-- Brand & Hub Status -->
+      <!-- Brand & Municipal Label -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-amber-500 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-            <i data-lucide="recycle" class="w-5 h-5 text-emerald-400"></i>
-          </div>
+        <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
+          <i data-lucide="recycle" class="w-5 h-5"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-400 bg-clip-text text-transparent">
-              EcoPulse SmartBin OS
+            <h1 class="text-base font-bold text-slate-900 tracking-tight">
+              EcoPulse SmartBin
             </h1>
-            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
-              CITIZEN ECO-PORTAL
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+              CITIZEN PORTAL
             </span>
           </div>
-          <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Smart Waste Segregation &bull; Touchless Dustbin Proximity Active
+          <p class="text-xs text-slate-500 hidden sm:flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            Public Waste Segregation &bull; Touchless Proximity Sensing
           </p>
         </div>
       </div>
 
-      <!-- Right Action Items -->
+      <!-- Header Actions -->
       <div class="flex items-center gap-2 sm:gap-3">
         
-        <!-- Citizen Eco-Points Reward Counter -->
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-700/60 text-xs">
-          <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
-          <span class="text-slate-300 hidden sm:inline">My Eco-Points:</span>
-          <strong id="citizen-points-counter" class="text-emerald-300 font-mono font-bold">140 Pts</strong>
+        <!-- Citizen Eco-Points Counter -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs">
+          <i data-lucide="award" class="w-4 h-4 text-emerald-700"></i>
+          <span class="text-slate-600 hidden sm:inline">My Eco-Points:</span>
+          <strong id="citizen-points-counter" class="text-emerald-800 font-mono font-bold">140 Pts</strong>
         </div>
 
         <!-- Sound Toggle -->
-        <button id="toggle-sound-btn" title="Toggle Sound" class="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-300 transition-all">
-          <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400"></i>
+        <button id="toggle-sound-btn" title="Toggle Audio Feedback" class="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 transition-colors">
+          <i data-lucide="volume-2" class="w-4 h-4 text-emerald-700"></i>
         </button>
 
-        <!-- Link to Dedicated /admin Portal -->
-        <a href="/admin" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm">
-          <i data-lucide="lock" class="w-3.5 h-3.5 text-blue-400"></i>
-          <span class="hidden sm:inline">Municipal</span> Admin Login (/admin)
+        <!-- Municipal Admin Portal Link -->
+        <a href="/admin" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-300"></i>
+          <span>Municipal Admin</span>
         </a>
 
       </div>
@@ -98,197 +100,187 @@
     </div>
   </header>
 
-  <!-- NEARBY STATION SELECTOR BAR -->
-  <div class="bg-slate-900/90 border-b border-slate-800/80 px-4 py-2.5 overflow-x-auto">
-    <div class="max-w-7xl mx-auto flex items-center gap-3">
-      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
-        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i> Select Nearby Station:
-      </span>
-      <div id="station-pills-container" class="flex items-center gap-2"></div>
+  <!-- Nearby Station Selector Bar -->
+  <div class="bg-white border-b border-slate-200 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+      
+      <div class="flex items-center gap-3">
+        <label for="station-picker" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="map-pin" class="w-4 h-4 text-emerald-700"></i> Active Location:
+        </label>
+        
+        <!-- Accessible Native Station Dropdown -->
+        <select id="station-picker" class="bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium rounded-lg focus:ring-emerald-600 focus:border-emerald-600 block px-3 py-1.5">
+          <option value="BIN-104">BIN-104: Green Civic Hub &bull; 120m away</option>
+          <option value="BIN-101">BIN-101: University Food Court &bull; 450m away</option>
+          <option value="BIN-103">BIN-103: Metro Transit &bull; 620m away</option>
+          <option value="BIN-102">BIN-102: Tech Park &bull; 850m away</option>
+          <option value="BIN-105">BIN-105: City Hospital &bull; 980m away</option>
+        </select>
+      </div>
+
+      <!-- Quick Station Pills -->
+      <div id="station-pills-container" class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0"></div>
+
     </div>
   </div>
 
-  <!-- Main Workspace -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Main Content Workspace -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     
-    <!-- Hero Citizen Banner -->
-    <div class="glass-panel p-6 rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-emerald-950/30 relative overflow-hidden">
-      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+    <!-- Civic Welcome & Overview Hero -->
+    <div class="glass-panel p-6 sm:p-8 bg-white border border-slate-200 rounded-2xl relative">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        
         <div class="space-y-2 max-w-2xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
-            <i data-lucide="smile" class="w-3.5 h-3.5"></i> Clean City Initiative &bull; Responsible Segregation
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Municipal Clean City Initiative
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Check Dustbin Availability &amp; Earn Eco-Rewards
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Public Waste Availability &amp; Eco-Rewards
           </h2>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            Check real-time fill levels before heading over. Deposit your 
-            <strong class="text-emerald-400">Compostable</strong> (Wet Organic) and 
-            <strong class="text-amber-400">Decomposable</strong> (Dry Fibers) cleanly to keep our city green and earn Eco-Points.
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Verify live container capacity before walking over. Safely dispose of 
+            <strong class="text-emerald-700">Compostable</strong> (Wet Organic) and 
+            <strong class="text-amber-700">Decomposable</strong> (Dry Cellulose) materials to support citywide diversion and claim citizen rewards.
           </p>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <a href="#sorter-section" class="btn-shimmer px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-900/30 flex items-center gap-2 transition-all">
+
+        <!-- Quick Civic Action Bar -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <a href="#sorter-section" class="btn-shimmer px-4 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs sm:text-sm shadow-xs flex items-center gap-2 transition-colors">
             <i data-lucide="scan" class="w-4 h-4"></i>
-            Can I Compost This? (AI Sorter)
+            AI Waste Sorter
           </a>
-          <button id="open-report-modal" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition-all">
-            <i data-lucide="flag" class="w-4 h-4 text-amber-400"></i>
-            Report Bin Issue / Full
+          <button id="open-report-modal" class="px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm border border-slate-300 flex items-center gap-2 transition-colors">
+            <i data-lucide="flag" class="w-4 h-4 text-amber-600"></i>
+            Report Full / Issue
           </button>
-          <a href="/admin" class="btn-shimmer px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md">
-            <i data-lucide="map" class="w-4 h-4 text-sky-400"></i>
-            Fleet Logistics Map &amp; TSP Optimizer (/admin)
+          <a href="/admin" class="px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs sm:text-sm border border-slate-200 flex items-center gap-2 transition-colors">
+            <i data-lucide="map" class="w-4 h-4 text-slate-600"></i>
+            Fleet Logistics (/admin)
           </a>
         </div>
-      </div>
-    </div>
 
-    <!-- ACTIVE DUSTBIN STATION HEADER -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SELECTED STATION</span>
-          <h3 id="active-station-name" class="text-base sm:text-lg font-black text-white">BIN-104: Green Civic Hub</h3>
-        </div>
-        <div class="flex items-center gap-2 mt-0.5">
-          <p id="active-station-zone" class="text-xs text-slate-400">Sector 4 &bull; Eco Park</p>
-          <span class="text-xs text-emerald-400 font-mono font-semibold" id="citizen-nearest-distance">&bull; 120m away</span>
-        </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <!-- Dustbin Style Selector -->
-        <div class="flex items-center gap-1.5 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
-          <button data-model="model-smart-kiosk" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-            🏙️ Kiosk
-          </button>
-          <button data-model="model-wheelie-bin" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-400 border border-slate-700">
-            🚜 Wheelie
-          </button>
-          <button data-model="model-stainless-steel" class="model-select-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-slate-800 text-slate-400 border border-slate-700">
-            🏢 Stainless
-          </button>
+      <!-- Civic Key Performance Metric Counters -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-100">
+        <div>
+          <span class="text-xs text-slate-500 font-medium">Selected Location</span>
+          <div id="active-station-name" class="text-sm font-bold text-slate-900 mt-0.5">BIN-104: Green Civic Hub</div>
+          <span id="active-station-zone" class="text-[11px] text-slate-500">Sector 4 &bull; Eco Park</span>
         </div>
-
-        <div class="text-xs font-mono text-slate-400 flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-          <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span id="active-station-battery">96%</span>
+        <div>
+          <span class="text-xs text-slate-500 font-medium">Walking Distance</span>
+          <div id="citizen-nearest-distance" class="text-sm font-bold text-emerald-700 font-mono mt-0.5">120m away</div>
+          <span class="text-[11px] text-slate-500">~1.5 min pedestrian path</span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-500 font-medium">Station Solar Battery</span>
+          <div id="active-station-battery" class="text-sm font-bold text-slate-900 font-mono mt-0.5">96%</div>
+          <span class="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
+            <i data-lucide="sun" class="w-3 h-3 text-amber-500"></i> Solar Micro-Grid Active
+          </span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-500 font-medium">Citizen Rewards</span>
+          <div class="text-sm font-bold text-emerald-800 font-mono mt-0.5">+10 Points / Drop</div>
+          <span class="text-[11px] text-slate-500">Tier: Eco-Champion 🌿</span>
         </div>
       </div>
+
     </div>
 
     <!-- MAIN DUAL DUSTBIN VIEW -->
     <section>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- ================= DUSTBIN 1: COMPOSTABLE (WET ORGANIC) ================= -->
-        <div class="glass-panel-elevated rounded-3xl p-6 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between">
-          <div>
-            <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="glass-panel p-6 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div class="space-y-4">
+            
+            <!-- Card Header -->
+            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                  <i data-lucide="leaf" class="w-6 h-6"></i>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
+                  <i data-lucide="leaf" class="w-5 h-5"></i>
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-lg font-extrabold text-white">Compostable Dustbin</h4>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                    <h3 class="text-base font-bold text-slate-900">Compostable Dustbin</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                       WET ORGANIC
                     </span>
                   </div>
-                  <p class="text-xs text-slate-400 mt-0.5">Vegetable scraps, fruit peels, coffee grounds, eggshells</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Vegetable scraps, fruit peels, coffee grounds, eggshells</p>
                 </div>
               </div>
 
-              <div id="compostable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Normal
+              <div id="compostable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Normal
               </div>
             </div>
 
-            <!-- Proximity & Pedal Bar -->
-            <div class="flex items-center justify-between gap-2 mb-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-              <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">
-                <i data-lucide="hand" class="w-3.5 h-3.5 text-sky-400"></i> Touchless Sensor:
+            <!-- Capacity Progress Bar -->
+            <div class="space-y-1.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-medium text-slate-700">Container Fill Level:</span>
+                <span id="compostable-percent" class="font-bold text-emerald-800 font-mono text-sm">68%</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                <div id="compostable-progress-bar" class="bg-emerald-600 h-full rounded-full transition-all" style="width: 68%;"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-500 pt-0.5 font-mono">
+                <span>Volume: <strong id="compostable-liters" class="text-slate-800">40.8 / 60 L</strong></span>
+                <span id="compostable-overflow-time">~12 hrs to capacity</span>
+              </div>
+            </div>
+
+            <!-- Touchless Proximity & Pedal Action Bar -->
+            <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+              <span class="text-slate-600 font-medium flex items-center gap-1.5">
+                <i data-lucide="hand" class="w-4 h-4 text-emerald-700"></i> Touchless Action:
               </span>
               <div class="flex gap-2">
-                <button data-wave-sensor="compostable" class="px-2.5 py-1 rounded-lg bg-sky-950/80 hover:bg-sky-900/80 text-sky-300 border border-sky-800 text-xs font-semibold transition-all flex items-center gap-1.5 shadow">
+                <button data-wave-sensor="compostable" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs">
                   <span>👋</span> Wave Hand
                 </button>
-                <button onclick="window.app.pressFootPedal('compostable')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition-all flex items-center gap-1.5 shadow">
-                  <span>🦶</span> Press Pedal
+                <button onclick="window.app.pressFootPedal('compostable')" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs">
+                  <span>🦶</span> Foot Pedal
                 </button>
               </div>
             </div>
 
-            <!-- 3D DUSTBIN MODEL -->
+            <!-- Dustbin Visual Stage (Preserves container IDs for animation) -->
             <div class="dustbin-perspective-stage">
-              <div id="compostable-dustbin" class="dustbin-container dustbin-compostable model-smart-kiosk">
-                <div class="dustbin-side-handle handle-left"></div>
-                <div class="dustbin-side-handle handle-right"></div>
-
+              <div id="compostable-dustbin" class="dustbin-container dustbin-compostable">
                 <div class="dustbin-lid-assembly">
                   <div class="dustbin-handle-bar"></div>
-                  
                   <div id="compostable-lid" data-lid-bin="compostable" class="dustbin-lid" title="Click to Open/Close Lid">
                     <div class="ultrasonic-lid-eyes">
                       <div class="sensor-optic"></div>
-                      <div class="sensor-optic"></div>
-                      <span class="text-[9px] font-mono text-sky-300 font-bold">IR &bull; HC-SR04</span>
+                      <span>ULTRASONIC</span>
                     </div>
-
                     <div class="lid-led-status">
                       <span id="compostable-led-dot" class="lid-led-dot"></span>
-                      <span>AUTO-LID</span>
+                      <span id="compostable-lcd-lid-status">AUTO-LID</span>
                     </div>
                   </div>
-                </div>
-
-                <div class="dustbin-neck-collar">
-                  <div class="dustbin-neck-halo"></div>
                 </div>
 
                 <div class="dustbin-body">
-                  <div class="dustbin-ribbed-texture"></div>
-
-                  <div class="dustbin-embedded-screen">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                      <span class="text-[10px] font-mono font-bold text-emerald-400">SMART SENSOR</span>
-                    </div>
-                    <div id="compostable-lcd-lid-status" class="text-[11px] font-mono text-slate-400">LID: CLOSED</div>
-                    <div id="compostable-lcd-fill" class="text-xs font-mono font-bold text-white">68%</div>
-                  </div>
-
                   <div class="dustbin-cutaway-window">
                     <div class="cutaway-ruler">
-                      <div class="cutaway-ruler-item"><span>100%</span></div>
-                      <div class="cutaway-ruler-item"><span>75%</span></div>
-                      <div class="cutaway-ruler-item"><span>50%</span></div>
-                      <div class="cutaway-ruler-item"><span>25%</span></div>
-                      <div class="cutaway-ruler-item"><span>0%</span></div>
+                      <span>100%</span>
+                      <span>75%</span>
+                      <span>50%</span>
+                      <span>25%</span>
+                      <span>0%</span>
                     </div>
-
-                    <div class="ultrasonic-beam-guide">
-                      <div class="ultrasonic-wave-ring"></div>
-                      <div class="ultrasonic-wave-ring"></div>
-                      <div class="ultrasonic-wave-ring"></div>
-                    </div>
-
                     <div id="compostable-stacked-icons" class="stacked-waste-icons"></div>
-
                     <div id="compostable-fill" class="dustbin-waste-fill waste-fill-compostable" style="height: 68%;">
-                      <div class="waste-wave-top">
-                        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-4 fill-emerald-500">
-                          <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,45 L1200,120 L0,120 Z"></path>
-                        </svg>
-                      </div>
-
-                      <div class="p-3 text-center text-white drop-shadow-lg">
-                        <span id="compostable-percent" class="text-4xl font-black font-mono tracking-tight">68%</span>
-                        <div class="text-[10px] uppercase font-mono tracking-widest text-emerald-200 font-bold mt-0.5">CURRENTLY FILLED</div>
-                      </div>
+                      <span class="text-xs font-mono font-bold">68%</span>
                     </div>
                   </div>
                 </div>
@@ -301,188 +293,134 @@
               </div>
             </div>
 
-            <!-- Telemetry Metrics -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
-                  <span>Sensor Dist.</span>
-                </div>
-                <div id="compostable-distance" class="text-sm sm:text-base font-bold text-white font-mono">32 cm</div>
-                <span class="text-[10px] text-slate-500">From lid sensor</span>
+            <!-- Telemetry Metrics 4-Column Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Sensor Head:</span>
+                <strong id="compostable-distance" class="text-slate-900 font-mono text-sm">32 cm</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="scale" class="w-3.5 h-3.5 text-emerald-400"></i>
-                  <span>Load Weight</span>
-                </div>
-                <div id="compostable-weight" class="text-sm sm:text-base font-bold text-white font-mono">16.8 kg</div>
-                <span class="text-[10px] text-slate-500">Waste mass</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Load Weight:</span>
+                <strong id="compostable-weight" class="text-slate-900 font-mono text-sm">16.8 kg</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="thermometer" class="w-3.5 h-3.5 text-amber-400"></i>
-                  <span>Decomp. Temp</span>
-                </div>
-                <div class="text-sm sm:text-base font-bold text-white font-mono">38.5 °C</div>
-                <span class="text-[10px] text-emerald-400">Active Microbes</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Temperature:</span>
+                <strong class="text-slate-900 font-mono text-sm">38.5 °C</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="droplet" class="w-3.5 h-3.5 text-blue-400"></i>
-                  <span>Moisture</span>
-                </div>
-                <div class="text-sm sm:text-base font-bold text-white font-mono">65%</div>
-                <span class="text-[10px] text-slate-500">Optimal Aerobic</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Moisture:</span>
+                <strong class="text-slate-900 font-mono text-sm">65%</strong>
               </div>
             </div>
 
-            <!-- Volume & Overflow -->
-            <div class="p-3 rounded-2xl bg-slate-800/50 border border-slate-700/60 mb-4 flex items-center justify-between text-xs">
-              <div class="flex items-center gap-2">
-                <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
-                <span class="text-slate-300">Volume: <strong id="compostable-liters" class="text-white font-mono">40.8 / 60 L</strong></span>
-              </div>
-              <div class="flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
-                <span id="compostable-overflow-time" class="text-slate-300 font-mono">~12 hours to capacity</span>
-              </div>
+          </div>
+
+          <!-- Citizen Disposal Action Bar -->
+          <div class="mt-4 pt-4 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-800">Record Waste Deposit:</span>
+              <span class="text-emerald-700 font-semibold font-mono">+10 Pts per Drop</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button data-deposit-bin="compostable" data-deposit-amount="5" data-deposit-label="Banana Peel" data-deposit-icon="🍌" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 hover:text-emerald-800 text-xs font-medium transition-colors text-center">
+                🍌 +5% Fruit Peel
+              </button>
+              <button data-deposit-bin="compostable" data-deposit-amount="10" data-deposit-label="Food Leftovers" data-deposit-icon="🥗" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 hover:text-emerald-800 text-xs font-medium transition-colors text-center">
+                🥗 +10% Scraps
+              </button>
+              <button data-deposit-bin="compostable" data-deposit-amount="18" data-deposit-label="Garden Leaves" data-deposit-icon="🍂" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 hover:text-emerald-800 text-xs font-medium transition-colors text-center">
+                🍂 +18% Leaves
+              </button>
             </div>
           </div>
 
-          <!-- Actions & Citizen Disposal -->
-          <div class="space-y-3 pt-3 border-t border-slate-800">
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-                <span class="font-semibold flex items-center gap-1.5">
-                  <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-emerald-400"></i> Dispose Organic Waste (+10 Eco-Pts):
-                </span>
-                <span class="text-emerald-400 text-[11px] font-bold">+10 Pts per drop</span>
-              </div>
-              <div class="grid grid-cols-3 gap-2">
-                <button data-deposit-bin="compostable" data-deposit-amount="5" data-deposit-label="Banana Peel" data-deposit-icon="🍌" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🍌 +5% Peel
-                </button>
-                <button data-deposit-bin="compostable" data-deposit-amount="10" data-deposit-label="Food Leftovers" data-deposit-icon="🥗" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🥗 +10% Scraps
-                </button>
-                <button data-deposit-bin="compostable" data-deposit-amount="18" data-deposit-label="Garden Leaves" data-deposit-icon="🍂" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-emerald-950/60 hover:border-emerald-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🍂 +18% Leaves
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- ================= DUSTBIN 2: DECOMPOSABLE (DRY FIBERS) ================= -->
-        <div class="glass-panel-elevated rounded-3xl p-6 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between">
-          <div>
-            <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="glass-panel p-6 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between">
+          <div class="space-y-4">
+            
+            <!-- Card Header -->
+            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                  <i data-lucide="package" class="w-6 h-6"></i>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center">
+                  <i data-lucide="package" class="w-5 h-5"></i>
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-lg font-extrabold text-white">Decomposable Dustbin</h4>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-800">
-                      DRY BIODEGRADABLE
+                    <h3 class="text-base font-bold text-slate-900">Decomposable Dustbin</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                      DRY FIBERS
                     </span>
                   </div>
-                  <p class="text-xs text-slate-400 mt-0.5">Cardboard packaging, paper bags, egg cartons, wood pulp</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Cardboard packaging, paper bags, egg cartons, wood pulp</p>
                 </div>
               </div>
 
-              <div id="decomposable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Normal
+              <div id="decomposable-status-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span> Normal
               </div>
             </div>
 
-            <!-- Proximity & Pedal Bar -->
-            <div class="flex items-center justify-between gap-2 mb-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-              <span class="text-slate-400 text-[11px] font-medium flex items-center gap-1">
-                <i data-lucide="hand" class="w-3.5 h-3.5 text-amber-400"></i> Touchless Sensor:
+            <!-- Capacity Progress Bar -->
+            <div class="space-y-1.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-medium text-slate-700">Container Fill Level:</span>
+                <span id="decomposable-percent" class="font-bold text-amber-800 font-mono text-sm">42%</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                <div id="decomposable-progress-bar" class="bg-amber-600 h-full rounded-full transition-all" style="width: 42%;"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-500 pt-0.5 font-mono">
+                <span>Volume: <strong id="decomposable-liters" class="text-slate-800">33.6 / 80 L</strong></span>
+                <span id="decomposable-overflow-time">~23 hrs to capacity</span>
+              </div>
+            </div>
+
+            <!-- Touchless Proximity & Pedal Action Bar -->
+            <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+              <span class="text-slate-600 font-medium flex items-center gap-1.5">
+                <i data-lucide="hand" class="w-4 h-4 text-amber-700"></i> Touchless Action:
               </span>
               <div class="flex gap-2">
-                <button data-wave-sensor="decomposable" class="px-2.5 py-1 rounded-lg bg-amber-950/80 hover:bg-amber-900/80 text-amber-300 border border-amber-800 text-xs font-semibold transition-all flex items-center gap-1.5 shadow">
+                <button data-wave-sensor="decomposable" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs">
                   <span>👋</span> Wave Hand
                 </button>
-                <button onclick="window.app.pressFootPedal('decomposable')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition-all flex items-center gap-1.5 shadow">
-                  <span>🦶</span> Press Pedal
+                <button onclick="window.app.pressFootPedal('decomposable')" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs">
+                  <span>🦶</span> Foot Pedal
                 </button>
               </div>
             </div>
 
-            <!-- 3D DUSTBIN MODEL -->
+            <!-- Dustbin Visual Stage -->
             <div class="dustbin-perspective-stage">
-              <div id="decomposable-dustbin" class="dustbin-container dustbin-decomposable model-smart-kiosk">
-                <div class="dustbin-side-handle handle-left"></div>
-                <div class="dustbin-side-handle handle-right"></div>
-
+              <div id="decomposable-dustbin" class="dustbin-container dustbin-decomposable">
                 <div class="dustbin-lid-assembly">
                   <div class="dustbin-handle-bar"></div>
-                  
                   <div id="decomposable-lid" data-lid-bin="decomposable" class="dustbin-lid" title="Click to Open/Close Lid">
                     <div class="ultrasonic-lid-eyes">
                       <div class="sensor-optic"></div>
-                      <div class="sensor-optic"></div>
-                      <span class="text-[9px] font-mono text-sky-300 font-bold">IR &bull; HC-SR04</span>
+                      <span>ULTRASONIC</span>
                     </div>
-
                     <div class="lid-led-status">
                       <span id="decomposable-led-dot" class="lid-led-dot"></span>
-                      <span>AUTO-LID</span>
+                      <span id="decomposable-lcd-lid-status">AUTO-LID</span>
                     </div>
                   </div>
-                </div>
-
-                <div class="dustbin-neck-collar">
-                  <div class="dustbin-neck-halo"></div>
                 </div>
 
                 <div class="dustbin-body">
-                  <div class="dustbin-ribbed-texture"></div>
-
-                  <div class="dustbin-embedded-screen">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                      <span class="text-[10px] font-mono font-bold text-amber-400">SMART SENSOR</span>
-                    </div>
-                    <div id="decomposable-lcd-lid-status" class="text-[11px] font-mono text-slate-400">LID: CLOSED</div>
-                    <div id="decomposable-lcd-fill" class="text-xs font-mono font-bold text-white">42%</div>
-                  </div>
-
                   <div class="dustbin-cutaway-window">
                     <div class="cutaway-ruler">
-                      <div class="cutaway-ruler-item"><span>100%</span></div>
-                      <div class="cutaway-ruler-item"><span>75%</span></div>
-                      <div class="cutaway-ruler-item"><span>50%</span></div>
-                      <div class="cutaway-ruler-item"><span>25%</span></div>
-                      <div class="cutaway-ruler-item"><span>0%</span></div>
+                      <span>100%</span>
+                      <span>75%</span>
+                      <span>50%</span>
+                      <span>25%</span>
+                      <span>0%</span>
                     </div>
-
-                    <div class="ultrasonic-beam-guide">
-                      <div class="ultrasonic-wave-ring"></div>
-                      <div class="ultrasonic-wave-ring"></div>
-                      <div class="ultrasonic-wave-ring"></div>
-                    </div>
-
                     <div id="decomposable-stacked-icons" class="stacked-waste-icons"></div>
-
                     <div id="decomposable-fill" class="dustbin-waste-fill waste-fill-decomposable" style="height: 42%;">
-                      <div class="waste-wave-top">
-                        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-4 fill-amber-500">
-                          <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,45 L1200,120 L0,120 Z"></path>
-                        </svg>
-                      </div>
-
-                      <div class="p-3 text-center text-white drop-shadow-lg">
-                        <span id="decomposable-percent" class="text-4xl font-black font-mono tracking-tight">42%</span>
-                        <div class="text-[10px] uppercase font-mono tracking-widest text-amber-200 font-bold mt-0.5">CURRENTLY FILLED</div>
-                      </div>
+                      <span class="text-xs font-mono font-bold">42%</span>
                     </div>
                   </div>
                 </div>
@@ -495,157 +433,125 @@
               </div>
             </div>
 
-            <!-- Telemetry Metrics -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="radio" class="w-3.5 h-3.5 text-sky-400"></i>
-                  <span>Sensor Dist.</span>
-                </div>
-                <div id="decomposable-distance" class="text-sm sm:text-base font-bold text-white font-mono">58 cm</div>
-                <span class="text-[10px] text-slate-500">From lid sensor</span>
+            <!-- Telemetry Metrics 4-Column Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Sensor Head:</span>
+                <strong id="decomposable-distance" class="text-slate-900 font-mono text-sm">58 cm</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="scale" class="w-3.5 h-3.5 text-amber-400"></i>
-                  <span>Load Weight</span>
-                </div>
-                <div id="decomposable-weight" class="text-sm sm:text-base font-bold text-white font-mono">9.4 kg</div>
-                <span class="text-[10px] text-slate-500">Dry cellulose bulk</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Load Weight:</span>
+                <strong id="decomposable-weight" class="text-slate-900 font-mono text-sm">9.4 kg</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="hourglass" class="w-3.5 h-3.5 text-orange-400"></i>
-                  <span>Degrade Speed</span>
-                </div>
-                <div class="text-sm sm:text-base font-bold text-white font-mono">2-6 Wks</div>
-                <span class="text-[10px] text-amber-400">Rapid Breakdown</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Degrade Rate:</span>
+                <strong class="text-slate-900 font-mono text-sm">2-6 Wks</strong>
               </div>
-
-              <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
-                <div class="flex items-center gap-1.5 text-slate-400 text-xs mb-1">
-                  <i data-lucide="wind" class="w-3.5 h-3.5 text-blue-400"></i>
-                  <span>Humidity</span>
-                </div>
-                <div class="text-sm sm:text-base font-bold text-white font-mono">44%</div>
-                <span class="text-[10px] text-slate-500">Ideal Dry Range</span>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="text-slate-500 block text-[11px]">Humidity:</span>
+                <strong class="text-slate-900 font-mono text-sm">44%</strong>
               </div>
             </div>
 
-            <!-- Volume & Overflow -->
-            <div class="p-3 rounded-2xl bg-slate-800/50 border border-slate-700/60 mb-4 flex items-center justify-between text-xs">
-              <div class="flex items-center gap-2">
-                <i data-lucide="database" class="w-4 h-4 text-amber-400"></i>
-                <span class="text-slate-300">Volume: <strong id="decomposable-liters" class="text-white font-mono">33.6 / 80 L</strong></span>
-              </div>
-              <div class="flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
-                <span id="decomposable-overflow-time" class="text-slate-300 font-mono">~23 hours to capacity</span>
-              </div>
+          </div>
+
+          <!-- Citizen Disposal Action Bar -->
+          <div class="mt-4 pt-4 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-800">Record Waste Deposit:</span>
+              <span class="text-amber-700 font-semibold font-mono">+10 Pts per Drop</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button data-deposit-bin="decomposable" data-deposit-amount="6" data-deposit-label="Paper Bag" data-deposit-icon="🛍️" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 hover:text-amber-800 text-xs font-medium transition-colors text-center">
+                🛍️ +6% Paper Bag
+              </button>
+              <button data-deposit-bin="decomposable" data-deposit-amount="12" data-deposit-label="Cardboard Box" data-deposit-icon="📦" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 hover:text-amber-800 text-xs font-medium transition-colors text-center">
+                📦 +12% Box
+              </button>
+              <button data-deposit-bin="decomposable" data-deposit-amount="20" data-deposit-label="Pulp Cartons" data-deposit-icon="🥡" class="py-2 px-2.5 rounded-lg bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 hover:text-amber-800 text-xs font-medium transition-colors text-center">
+                🥡 +20% Cartons
+              </button>
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="space-y-3 pt-3 border-t border-slate-800">
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-300 mb-2">
-                <span class="font-semibold flex items-center gap-1.5">
-                  <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-amber-400"></i> Dispose Fibrous Waste (+10 Eco-Pts):
-                </span>
-                <span class="text-amber-400 text-[11px] font-bold">+10 Pts per drop</span>
-              </div>
-              <div class="grid grid-cols-3 gap-2">
-                <button data-deposit-bin="decomposable" data-deposit-amount="6" data-deposit-label="Paper Bag" data-deposit-icon="🛍️" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🛍️ +6% Bag
-                </button>
-                <button data-deposit-bin="decomposable" data-deposit-amount="12" data-deposit-label="Cardboard Box" data-deposit-icon="📦" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  📦 +12% Box
-                </button>
-                <button data-deposit-bin="decomposable" data-deposit-amount="20" data-deposit-label="Pulp Cartons" data-deposit-icon="🥡" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-amber-950/60 hover:border-amber-500/40 border border-slate-700 text-slate-200 text-xs font-medium transition-all text-center">
-                  🥡 +20% Pulp
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>
     </section>
 
     <!-- SMART WASTE CLASSIFIER / SEARCH SECTION -->
-    <section id="sorter-section" class="glass-panel rounded-3xl p-6 sm:p-8 border border-slate-800 relative">
-      <div class="max-w-3xl mx-auto space-y-6">
+    <section id="sorter-section" class="glass-panel p-6 sm:p-8 bg-white border border-slate-200 rounded-2xl">
+      <div class="max-w-3xl mx-auto space-y-5">
         
-        <div class="text-center space-y-2">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">
-            <i data-lucide="search" class="w-3.5 h-3.5"></i> Smart Waste Classification Engine
+        <div class="text-center space-y-1.5">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i> Civic Waste Classification Engine
           </div>
-          <h3 class="text-2xl font-black text-white">Which Dustbin Does Your Waste Belong To?</h3>
-          <p class="text-slate-400 text-xs sm:text-sm">
-            Search any everyday item to discover whether it belongs in the <span class="text-emerald-400 font-semibold">Compostable Dustbin</span>, <span class="text-amber-400 font-semibold">Decomposable Dustbin</span>, or <span class="text-rose-400 font-semibold">Non-Decomposable Waste</span>.
+          <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Which Dustbin Does Your Waste Belong To?</h3>
+          <p class="text-slate-600 text-xs sm:text-sm">
+            Search any household item to find whether it belongs in the <span class="text-emerald-700 font-semibold">Compostable Dustbin</span>, <span class="text-amber-700 font-semibold">Decomposable Dustbin</span>, or <span class="text-rose-700 font-semibold">Non-Decomposable Waste</span>.
           </p>
         </div>
 
-        <!-- Search Input Bar -->
+        <!-- Search Bar -->
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-            <i data-lucide="search" class="w-5 h-5"></i>
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
           </div>
           <input 
             type="text" 
             id="waste-search-input" 
-            placeholder="Type any waste item (e.g., banana peel, cardboard box, coffee grounds, egg carton, plastic bottle)..." 
-            class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white placeholder-slate-500 text-sm transition-all shadow-inner"
+            placeholder="Type any waste item (e.g., banana peel, cardboard box, coffee grounds, egg carton)..." 
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 text-slate-900 placeholder-slate-400 text-sm transition-all"
           >
         </div>
 
-        <!-- Quick Tags -->
-        <div class="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
-          <span class="text-slate-500 text-[11px] font-mono mr-1">Quick Select:</span>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Banana Peel</button>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Cardboard Box</button>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Coffee Grounds</button>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Egg Carton</button>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Plastic Bottle</button>
-          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Newspaper</button>
+        <!-- Quick Filter Tags -->
+        <div class="flex flex-wrap items-center justify-center gap-1.5 text-xs">
+          <span class="text-slate-500 text-xs mr-1">Quick Suggestions:</span>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Banana Peel</button>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Cardboard Box</button>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Coffee Grounds</button>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Egg Carton</button>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Plastic Bottle</button>
+          <button class="quick-tag px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors">Newspaper</button>
         </div>
 
-        <div id="classifier-results" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 flex flex-col justify-between">
+        <!-- Classifier Results Display Grid -->
+        <div id="classifier-results" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-xl">🍌</span>
-                  <h4 class="font-bold text-slate-100 text-sm">Banana Peel / Fruit Scraps</h4>
+                  <h4 class="font-bold text-slate-900 text-sm">Banana Peel / Fruit Scraps</h4>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                   COMPOSTABLE
                 </span>
               </div>
-              <p class="text-slate-400 text-xs">Decomposes in <strong>2 to 4 Weeks</strong>. Converts into nutrient-rich organic compost.</p>
+              <p class="text-slate-600 text-xs">Decomposes in <strong>2 to 4 Weeks</strong>. Converts into nutrient-rich organic compost.</p>
             </div>
-            <button onclick="window.app.depositWaste('compostable', 5, 'Banana Peel', '🍌')" class="mt-3 w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow">
-              <span>🍌</span> Drop in Compostable Dustbin (+10 Pts)
+            <button onclick="window.app.depositWaste('compostable', 5, 'Banana Peel', '🍌')" class="mt-3 w-full py-2 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+              <span>🍌</span> Record Drop in Compostable Dustbin (+10 Pts)
             </button>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 flex flex-col justify-between">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                   <span class="text-xl">📦</span>
-                  <h4 class="font-bold text-slate-100 text-sm">Corrugated Cardboard Box</h4>
+                  <h4 class="font-bold text-slate-900 text-sm">Corrugated Cardboard Box</h4>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
                   DECOMPOSABLE
                 </span>
               </div>
-              <p class="text-slate-400 text-xs">Decomposes in <strong>2 Months</strong>. Natural wood pulp cellulose breaks down safely.</p>
+              <p class="text-slate-600 text-xs">Decomposes in <strong>2 Months</strong>. Natural wood pulp cellulose breaks down safely.</p>
             </div>
-            <button onclick="window.app.depositWaste('decomposable', 8, 'Cardboard Box', '📦')" class="mt-3 w-full py-2 px-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow">
-              <span>📦</span> Drop in Decomposable Dustbin (+10 Pts)
+            <button onclick="window.app.depositWaste('decomposable', 8, 'Cardboard Box', '📦')" class="mt-3 w-full py-2 px-3 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+              <span>📦</span> Record Drop in Decomposable Dustbin (+10 Pts)
             </button>
           </div>
         </div>
@@ -654,69 +560,69 @@
     </section>
 
     <!-- CITIZEN LOCAL MAP: FIND NEAREST BIN -->
-    <section class="glass-panel-elevated rounded-3xl p-6 border border-slate-800">
+    <section class="glass-panel p-6 bg-white border border-slate-200 rounded-2xl">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h3 class="text-lg font-bold text-white flex items-center gap-2">
-            <i data-lucide="map" class="w-5 h-5 text-emerald-400"></i>
-            Find Nearest Smart Dustbins &amp; Get Route
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="map" class="w-5 h-5 text-emerald-700"></i>
+            Find Nearest Smart Dustbins &amp; Walking Route
           </h3>
-          <p class="text-xs text-slate-400">Click any dustbin icon or select below to calculate instant walking route</p>
+          <p class="text-xs text-slate-500">Click any dustbin icon or select below to view route directions</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button onclick="window.app.showCitizenRouteToStation()" class="btn-shimmer px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-900/40">
+          <button onclick="window.app.showCitizenRouteToStation()" class="btn-shimmer px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-xs">
             <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
             Route to Selected Bin
           </button>
-          <button onclick="window.app.clearCitizenRoute()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all">
+          <button onclick="window.app.clearCitizenRoute()" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
             Clear Route
           </button>
-          <a href="/admin" class="btn-shimmer px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-lg shadow-blue-900/40">
-            <i data-lucide="truck" class="w-3.5 h-3.5"></i>
-            Open Fleet Logistics Map &amp; TSP Optimizer
+          <a href="/admin" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-xs">
+            <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-300"></i>
+            Fleet Logistics Map &amp; TSP Optimizer (/admin)
           </a>
         </div>
       </div>
 
       <!-- Walking Route Direction HUD (shown when route active) -->
-      <div id="citizen-route-hud" class="hidden mb-4 p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div id="citizen-route-hud" class="hidden mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
-            <i data-lucide="footprints" class="w-5 h-5"></i>
+          <div class="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center flex-shrink-0">
+            <i data-lucide="footprints" class="w-4 h-4"></i>
           </div>
           <div>
-            <div id="citizen-route-title" class="text-xs font-bold text-white">Walking Route Active</div>
-            <div id="citizen-route-details" class="text-[11px] text-emerald-300">120m away &bull; ~1.5 min walk</div>
+            <div id="citizen-route-title" class="text-xs font-bold text-emerald-900">Walking Route Active</div>
+            <div id="citizen-route-details" class="text-[11px] text-emerald-700">120m away &bull; ~1.5 min walk</div>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">LOWEST EMISSIONS</span>
-          <button onclick="window.app.clearCitizenRoute()" class="text-xs text-slate-400 hover:text-white underline">Hide Directions</button>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white text-emerald-800 border border-emerald-300 font-semibold">LOWEST EMISSIONS</span>
+          <button onclick="window.app.clearCitizenRoute()" class="text-xs text-slate-600 hover:text-slate-900 underline">Hide Directions</button>
         </div>
       </div>
 
-      <div id="smartbin-map" style="width: 100%; height: 480px; min-height: 480px;" class="w-full h-[480px] min-h-[480px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-inner"></div>
+      <div id="smartbin-map" style="width: 100%; height: 480px; min-height: 480px;" class="w-full h-[480px] min-h-[480px] rounded-xl overflow-hidden border border-slate-200 shadow-inner"></div>
     </section>
 
   </main>
 
   <!-- CITIZEN ISSUE REPORT MODAL -->
-  <div id="citizen-report-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-panel-elevated max-w-md w-full rounded-3xl border border-slate-700 p-6">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-        <h4 class="font-bold text-white text-base flex items-center gap-2">
-          <i data-lucide="flag" class="w-4 h-4 text-amber-400"></i> Report Dustbin Issue
+  <div id="citizen-report-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white max-w-md w-full rounded-2xl border border-slate-200 p-6 shadow-xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h4 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i data-lucide="flag" class="w-4 h-4 text-amber-600"></i> Report Dustbin Issue
         </h4>
-        <button id="close-report-modal" class="p-1 rounded-lg text-slate-400 hover:text-white">
+        <button id="close-report-modal" class="p-1 rounded-lg text-slate-400 hover:text-slate-600">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form id="citizen-report-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Issue Category:</label>
-          <select id="report-issue-type" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Issue Category:</label>
+          <select id="report-issue-type" class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-xs text-slate-800">
             <option value="Bin Full / Overflow Risk">🚨 Bin Full / Overflow Risk</option>
             <option value="Foul Odor / Pest Influx">🤢 Strong Odor / Pests</option>
             <option value="Damaged Lid / Sensor Stuck">🛠️ Damaged Lid / Won't Open</option>
@@ -725,34 +631,34 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Optional Details:</label>
-          <textarea id="report-issue-note" rows="3" placeholder="Describe the issue at this station..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 placeholder-slate-500"></textarea>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Optional Details:</label>
+          <textarea id="report-issue-note" rows="3" placeholder="Describe the issue at this station..." class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-xs text-slate-800 placeholder-slate-400"></textarea>
         </div>
 
-        <button type="submit" class="btn-shimmer w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg">
+        <button type="submit" class="btn-shimmer w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-xs">
           <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit Report to Municipal Team
         </button>
       </form>
     </div>
   </div>
 
-  <!-- FOOTER WITH ADMIN ACCESS LINK -->
-  <footer class="mt-16 border-t border-slate-800/80 bg-slate-950/60 py-8 text-center text-xs text-slate-500">
+  <!-- Civic Footer -->
+  <footer class="mt-16 border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
-        <span class="font-extrabold text-slate-300">EcoPulse SmartBin OS</span>
+        <span class="font-bold text-slate-800">EcoPulse SmartBin OS</span>
         <span>&bull; Public Citizen Waste Portal</span>
       </div>
-      <div class="flex items-center gap-4 text-slate-400">
+      <div class="flex items-center gap-4 text-slate-600">
         <span>Citizen Eco-Rewards</span>
         <span>&bull;</span>
-        <a href="/admin" class="text-blue-400 hover:text-blue-300 underline font-semibold flex items-center gap-1">
+        <a href="/admin" class="text-slate-800 hover:text-emerald-700 underline font-semibold flex items-center gap-1">
           <i data-lucide="lock" class="w-3.5 h-3.5"></i> Municipal Admin Access (/admin)
         </a>
       </div>
     </div>
   </footer>
 
-  <script src="js/app.js?v=2.1"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>

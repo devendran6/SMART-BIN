@@ -431,6 +431,11 @@ class SmartBinApp {
   // Render station selector buttons
   renderStationSelector() {
     const container = document.getElementById("station-pills-container");
+    const picker = document.getElementById("station-picker");
+    if (picker) {
+      picker.value = this.state.currentStationId;
+    }
+
     if (!container) return;
 
     container.innerHTML = Object.values(this.state.stations).map(station => {
@@ -439,11 +444,11 @@ class SmartBinApp {
       const criticalClass = isCritical ? "has-critical" : "";
       const activeClass = isActive ? "active" : "";
 
-      let statusDot = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span>`;
+      let statusDot = `<span class="w-2 h-2 rounded-full bg-emerald-600"></span>`;
       if (isCritical) {
-        statusDot = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>`;
+        statusDot = `<span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>`;
       } else if (station.compostable.fillLevel >= 60 || station.decomposable.fillLevel >= 60) {
-        statusDot = `<span class="w-2 h-2 rounded-full bg-amber-400"></span>`;
+        statusDot = `<span class="w-2 h-2 rounded-full bg-amber-500"></span>`;
       }
 
       return `
@@ -468,57 +473,57 @@ class SmartBinApp {
       const isCritical = maxFill >= 80;
       const isActive = station.id === this.state.currentStationId;
 
-      let badgeColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      let badgeColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
       let statusText = "Normal";
       if (isCritical) {
-        badgeColor = "bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse";
+        badgeColor = "bg-rose-50 text-rose-800 border-rose-200";
         statusText = "Needs Pickup!";
       } else if (maxFill >= 60) {
-        badgeColor = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+        badgeColor = "bg-amber-50 text-amber-800 border-amber-200";
         statusText = "Moderate";
       }
 
       return `
         <div onclick="window.app.switchStation('${station.id}')" class="fleet-card ${isActive ? 'active-fleet' : ''}">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-white font-mono flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500 animate-ping' : 'bg-emerald-400'}"></span>
+            <span class="text-xs font-bold text-slate-900 font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full ${isCritical ? 'bg-rose-600 animate-ping' : 'bg-emerald-600'}"></span>
               ${station.id}
             </span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeColor}">
               ${statusText}
             </span>
           </div>
 
-          <h5 class="text-xs font-semibold text-slate-200 line-clamp-1 mb-1">${station.name}</h5>
-          <p class="text-[11px] text-slate-400 mb-3">${station.zone}</p>
+          <h5 class="text-xs font-semibold text-slate-800 line-clamp-1 mb-1">${station.name}</h5>
+          <p class="text-[11px] text-slate-500 mb-3">${station.zone}</p>
 
           <div class="space-y-1.5 text-[11px] font-mono">
             <div>
-              <div class="flex justify-between text-slate-400 text-[10px]">
+              <div class="flex justify-between text-slate-600 text-[10px]">
                 <span>Compostable:</span>
-                <span class="text-emerald-400 font-bold">${compFill}%</span>
+                <span class="text-emerald-700 font-bold">${compFill}%</span>
               </div>
-              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 transition-all" style="width: ${compFill}%"></div>
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-600 transition-all" style="width: ${compFill}%"></div>
               </div>
             </div>
             <div>
-              <div class="flex justify-between text-slate-400 text-[10px]">
+              <div class="flex justify-between text-slate-600 text-[10px]">
                 <span>Decomposable:</span>
-                <span class="text-amber-400 font-bold">${decompFill}%</span>
+                <span class="text-amber-700 font-bold">${decompFill}%</span>
               </div>
-              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-amber-500 transition-all" style="width: ${decompFill}%"></div>
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-amber-600 transition-all" style="width: ${decompFill}%"></div>
               </div>
             </div>
           </div>
 
-          <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
             <span class="flex items-center gap-1">
-              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-400"></i> ${station.batteryPercent}%
+              <i data-lucide="battery-charging" class="w-3 h-3 text-emerald-700"></i> ${station.batteryPercent}%
             </span>
-            <span class="text-sky-400 font-semibold hover:underline">Select &rarr;</span>
+            <span class="text-slate-800 font-semibold hover:underline">Select &rarr;</span>
           </div>
         </div>
       `;
@@ -593,20 +598,22 @@ class SmartBinApp {
     const dustbinEl = document.getElementById(`${binKey}-dustbin`);
     const overflowTimeEl = document.getElementById(`${binKey}-overflow-time`);
     const lcdScreen = document.getElementById(`${binKey}-lcd-fill`);
+    const progressBar = document.getElementById(`${binKey}-progress-bar`);
 
     if (fillEl) fillEl.style.height = `${fill}%`;
     if (percentEl) percentEl.innerText = `${fill}%`;
     if (distanceEl) distanceEl.innerText = `${distanceCm} cm`;
     if (litersEl) litersEl.innerText = `${litersCurrent} / ${binData.maxCapacityLiters} L`;
     if (weightEl) weightEl.innerText = `${binData.weightKg.toFixed(1)} kg`;
+    if (progressBar) progressBar.style.width = `${fill}%`;
 
     if (lcdScreen) lcdScreen.innerText = `${fill}% (${litersCurrent}L)`;
 
     if (overflowTimeEl) {
       if (fill >= 90) {
-        overflowTimeEl.innerHTML = `<span class="text-rose-400 font-bold">Overflow Imminent (&lt; 1 hr)</span>`;
+        overflowTimeEl.innerHTML = `<span class="text-rose-700 font-bold">Overflow Imminent (&lt; 1 hr)</span>`;
       } else if (fill >= 75) {
-        overflowTimeEl.innerHTML = `<span class="text-amber-400 font-medium">Approx. 4-6 hrs left</span>`;
+        overflowTimeEl.innerHTML = `<span class="text-amber-700 font-medium">Approx. 4-6 hrs left</span>`;
       } else {
         const remainingHours = Math.round((100 - fill) * 0.4);
         overflowTimeEl.innerText = `~${remainingHours} hrs to capacity`;
@@ -615,16 +622,16 @@ class SmartBinApp {
 
     if (statusBadgeEl && dustbinEl) {
       if (fill >= 80) {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> Critical Overflow Risk`;
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-50 text-rose-800 border border-rose-200 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span> Critical Overflow Risk`;
         dustbinEl.classList.add("critical-bin-alarm");
       } else if (fill >= 60) {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Approaching Full`;
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-600"></span> Approaching Full`;
         dustbinEl.classList.remove("critical-bin-alarm");
       } else {
-        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5";
-        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Optimal Capacity`;
+        statusBadgeEl.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5";
+        statusBadgeEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-600"></span> Optimal Capacity`;
         dustbinEl.classList.remove("critical-bin-alarm");
       }
     }
@@ -1388,8 +1395,8 @@ class SmartBinApp {
 
     if (!query || query.trim().length === 0) {
       resultsContainer.innerHTML = `
-        <div class="col-span-full text-center py-6 text-slate-400">
-          <p class="text-sm font-medium">Type any item above or click a tag to see which dustbin it belongs to.</p>
+        <div class="col-span-full text-center py-6 text-slate-500">
+          <p class="text-sm font-medium">Type any item above or select a quick suggestion to identify the appropriate dustbin.</p>
         </div>
       `;
       return;
@@ -1403,17 +1410,17 @@ class SmartBinApp {
 
     if (matches.length === 0) {
       resultsContainer.innerHTML = `
-        <div class="col-span-full p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-center">
-          <div class="text-amber-400 font-semibold mb-1">Unrecognized Waste: "${query}"</div>
-          <p class="text-xs text-slate-300 max-w-md mx-auto mb-3">
-            Organic food/garden scraps go into <strong>Compostable Dustbin</strong>.
-            Dry untreated paper/cardboard fibers go into <strong>Decomposable Dustbin</strong>.
+        <div class="col-span-full p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+          <div class="text-amber-800 font-semibold mb-1">Unrecognized Item: "${query}"</div>
+          <p class="text-xs text-slate-600 max-w-md mx-auto mb-3">
+            Organic food and garden scraps belong in the <strong>Compostable Dustbin</strong>.
+            Clean, untreated paper and cardboard belong in the <strong>Decomposable Dustbin</strong>.
           </p>
           <div class="flex justify-center gap-2">
-            <button onclick="window.app.depositWaste('compostable', 5, '${query}', '🥗')" class="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-medium">
+            <button onclick="window.app.depositWaste('compostable', 5, '${query}', '🥗')" class="px-3 py-1.5 text-xs bg-emerald-700 hover:bg-emerald-800 rounded-lg text-white font-medium transition-colors shadow-2xs">
               Deposit to Compostable (+5%)
             </button>
-            <button onclick="window.app.depositWaste('decomposable', 5, '${query}', '📦')" class="px-3 py-1.5 text-xs bg-amber-600 hover:bg-amber-500 rounded-lg text-white font-medium">
+            <button onclick="window.app.depositWaste('decomposable', 5, '${query}', '📦')" class="px-3 py-1.5 text-xs bg-amber-700 hover:bg-amber-800 rounded-lg text-white font-medium transition-colors shadow-2xs">
               Deposit to Decomposable (+5%)
             </button>
           </div>
@@ -1427,43 +1434,43 @@ class SmartBinApp {
       let buttonHtml = "";
 
       if (item.category === "compostable") {
-        badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+        badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
         buttonHtml = `
-          <button onclick="window.app.depositWaste('compostable', 6, '${item.name}', '${item.icon}')" class="mt-3 w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md">
-            <span>${item.icon}</span> Drop in Compostable Dustbin (+6%)
+          <button onclick="window.app.depositWaste('compostable', 6, '${item.name}', '${item.icon}')" class="mt-3 w-full py-2 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+            <span>${item.icon}</span> Record Drop in Compostable Dustbin (+6%)
           </button>
         `;
       } else if (item.category === "decomposable") {
-        badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/40";
+        badgeClass = "bg-amber-100 text-amber-800 border-amber-300";
         buttonHtml = `
-          <button onclick="window.app.depositWaste('decomposable', 8, '${item.name}', '${item.icon}')" class="mt-3 w-full py-2 px-3 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md">
-            <span>${item.icon}</span> Drop in Decomposable Dustbin (+8%)
+          <button onclick="window.app.depositWaste('decomposable', 8, '${item.name}', '${item.icon}')" class="mt-3 w-full py-2 px-3 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+            <span>${item.icon}</span> Record Drop in Decomposable Dustbin (+8%)
           </button>
         `;
       } else {
-        badgeClass = "bg-rose-500/20 text-rose-300 border-rose-500/40";
+        badgeClass = "bg-rose-100 text-rose-800 border-rose-300";
         buttonHtml = `
-          <div class="mt-3 p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium">
-            ⛔ DO NOT PUT IN ORGANIC BINS - Segregate to Dry Recyclables / Landfill
+          <div class="mt-3 p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs text-center font-medium">
+            ⛔ Non-Organic - Segregate to Dry Recyclables or Hazardous Disposal
           </div>
         `;
       }
 
       return `
-        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700/80 hover:border-slate-600 transition-all flex flex-col justify-between">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2">
                 <span class="text-xl">${item.icon}</span>
-                <h4 class="font-bold text-slate-100 text-sm">${item.name}</h4>
+                <h4 class="font-bold text-slate-900 text-sm">${item.name}</h4>
               </div>
-              <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${badgeClass}">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${badgeClass}">
                 ${item.category}
               </span>
             </div>
-            <div class="space-y-1.5 text-xs text-slate-300">
-              <div>Decomposition Time: <strong class="text-slate-200">${item.time}</strong></div>
-              <p class="text-slate-400 text-xs mt-1 leading-relaxed">${item.tip}</p>
+            <div class="space-y-1 text-xs text-slate-600">
+              <div>Decomposition Time: <strong class="text-slate-800 font-medium">${item.time}</strong></div>
+              <p class="text-slate-500 text-xs mt-1 leading-relaxed">${item.tip}</p>
             </div>
           </div>
           ${buttonHtml}
@@ -1479,11 +1486,11 @@ class SmartBinApp {
     if (!container) return;
 
     const toast = document.createElement("div");
-    let borderColor = "border-emerald-500/50 bg-slate-900/90 text-emerald-300";
-    if (type === "warning") borderColor = "border-amber-500/50 bg-slate-900/90 text-amber-300";
-    if (type === "danger") borderColor = "border-rose-500/50 bg-slate-900/90 text-rose-300";
+    let borderColor = "border-emerald-300 bg-white text-slate-800 shadow-md";
+    if (type === "warning") borderColor = "border-amber-300 bg-white text-slate-800 shadow-md";
+    if (type === "danger") borderColor = "border-rose-300 bg-white text-slate-800 shadow-md";
 
-    toast.className = `px-4 py-3 rounded-xl border backdrop-blur-md shadow-2xl text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${borderColor}`;
+    toast.className = `px-4 py-3 rounded-xl border text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${borderColor}`;
     toast.innerHTML = message;
 
     container.appendChild(toast);
@@ -1496,6 +1503,14 @@ class SmartBinApp {
   }
 
   setupEventListeners() {
+    // Native Station Picker Dropdown
+    const stationPicker = document.getElementById("station-picker");
+    if (stationPicker) {
+      stationPicker.addEventListener("change", (e) => {
+        this.switchStation(e.target.value);
+      });
+    }
+
     // Role switcher buttons
     const roleCitizenBtn = document.getElementById("role-btn-citizen");
     const roleAdminBtn = document.getElementById("role-btn-admin");
